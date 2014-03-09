@@ -1,0 +1,14 @@
+{
+  "name": "tab-switcher",
+  "main": "./lib/tab-switcher",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "activationEvents": ["tab-switcher:toggle"],
+  "repository": "https://github.com/atom/tab-switcher",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+  }
+}
