@@ -1,5 +1,6 @@
-# tab-switcher package
+# Tab Switcher
 
-A short description of your package.
+Tab Switcher reorders your tabs according to least recent usage, making it
+easier to switch between active tabs.
 
-![A screenshot of your spankin' package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![Screenshot](https://raw.github.com/oggy/tab-switcher/master/doc/tab-switcher.gif)

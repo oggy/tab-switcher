@@ -7,7 +7,7 @@
     "tab-switcher:next-tab",
     "tab-switcher:previous-tab"
   ],
-  "repository": "https://github.com/atom/tab-switcher",
+  "repository": "https://github.com/oggy/tab-switcher",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
