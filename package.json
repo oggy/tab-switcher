@@ -3,7 +3,10 @@
   "main": "./lib/tab-switcher",
   "version": "0.0.0",
   "description": "A short description of your package",
-  "activationEvents": ["tab-switcher:toggle"],
+  "activationEvents": [
+    "tab-switcher:next-tab",
+    "tab-switcher:previous-tab"
+  ],
   "repository": "https://github.com/atom/tab-switcher",
   "license": "MIT",
   "engines": {
