@@ -2,7 +2,7 @@
   "name": "tab-switcher",
   "main": "./lib/tab-switcher",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "Least recently used tab ordering for Atom.",
   "activationEvents": [
     "tab-switcher:next-tab",
     "tab-switcher:previous-tab"
