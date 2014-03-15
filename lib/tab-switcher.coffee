@@ -3,22 +3,12 @@ class TabSwitcher
     @pane = @paneView.model
     @timeouts = 0
 
-  nextTab: ->
-    @pane.activateNextItem()
-    @waitAndRotate()
-
-  previousTab: ->
-    @pane.activatePreviousItem()
-    @waitAndRotate()
-
-  waitAndRotate: ->
-    item = @pane.getActiveItem()
+  itemActivated: (item) ->
     @timeouts += 1
     setTimeout((=> @timeout(item)), 1000)
 
   timeout: (item) ->
-    if @timeouts == 0
-      return
+    return if @timeouts == 0
 
     @timeouts -= 1
     if @timeouts == 0
@@ -34,12 +24,8 @@ TabSwitcher.find = (event) ->
 
 module.exports =
   activate: (state) ->
-    atom.workspaceView.command 'tab-switcher:next-tab', (event) =>
-      TabSwitcher.find(event).nextTab()
-
-    atom.workspaceView.command 'tab-switcher:previous-tab', (event) =>
-      TabSwitcher.find(event).previousTab()
+    atom.workspaceView.on 'pane:active-item-changed', (event, item) =>
+      TabSwitcher.find(event).itemActivated(item)
 
   deactivate: ->
-
-  serialize: ->
+    atom.workspaceView.off 'pane:active-item-changed'

@@ -1,3 +1,0 @@
-'.pane':
-  'alt-[': 'tab-switcher:previous-tab'
-  'alt-]': 'tab-switcher:next-tab'
