@@ -1,0 +1,4 @@
+## 0.2.0 (2014-03-15)
+
+* Consider a tab recently used whenever it was activated, not just when our
+  tab-switching commands were used. We no longer define tab-switching commands.
