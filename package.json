@@ -1,7 +1,7 @@
 {
   "name": "tab-switcher",
   "main": "./lib/tab-switcher",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Least recently used tab ordering for Atom.",
   "repository": "https://github.com/oggy/tab-switcher",
   "license": "MIT",
