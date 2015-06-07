@@ -1,19 +1,17 @@
 class TabSwitcher
   constructor: (pane) ->
     @pane = pane
-    @timeouts = 0
 
   itemActivated: (item) ->
-    @timeouts += 1
-    setTimeout((=> @timeout(item)), 1000)
+    keyup = (event) =>
+      if not (event.ctrlKey or event.altKey or event.shiftKey or event.shiftKey)
+        @moveTab(item)
+        document.removeEventListener 'keyup', keyup
+    document.addEventListener 'keyup', keyup
 
-  timeout: (item) ->
-    return if @timeouts == 0
-
-    @timeouts -= 1
-    if @timeouts == 0
-      unless @pane.isDestroyed() or item not in @pane.getItems()
-        @pane.moveItem(item, 0)
+  moveTab: (item) ->
+    unless @pane.isDestroyed() or item not in @pane.getItems()
+      @pane.moveItem(item, 0)
 
 TabSwitcher.find = (pane) ->
   instance = TabSwitcher.instances[pane.id]
