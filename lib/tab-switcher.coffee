@@ -12,7 +12,8 @@ class TabSwitcher
 
     @timeouts -= 1
     if @timeouts == 0
-      @pane.moveItem(item, 0)
+      unless @pane.isDestroyed() or item not in @pane.getItems()
+        @pane.moveItem(item, 0)
 
 TabSwitcher.find = (pane) ->
   instance = TabSwitcher.instances[pane.id]
