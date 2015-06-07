@@ -1,6 +1,6 @@
 class TabSwitcher
-  constructor: (@paneView) ->
-    @pane = @paneView.model
+  constructor: (pane) ->
+    @pane = pane
     @timeouts = 0
 
   itemActivated: (item) ->
@@ -14,18 +14,19 @@ class TabSwitcher
     if @timeouts == 0
       @pane.moveItem(item, 0)
 
-TabSwitcher.find = (event) ->
-  $pane = event.targetView().closest('.pane')
-  data = $pane.data('tab-switcher')
-  if data is undefined
-    data = new TabSwitcher($pane.data('view'))
-    $pane.data('tab-switcher', data)
-  data
+TabSwitcher.find = (pane) ->
+  instance = TabSwitcher.instances[pane.id]
+  return instance if instance
+  instance = new TabSwitcher(pane)
+  TabSwitcher.instances[pane.id] = instance
+
+TabSwitcher.instances = {}
 
 module.exports =
   activate: (state) ->
-    atom.workspaceView.on 'pane:active-item-changed', (event, item) =>
-      TabSwitcher.find(event).itemActivated(item)
+    @disposable = atom.workspace.onDidChangeActivePaneItem (item) =>
+      pane = atom.workspace.getActivePane()
+      TabSwitcher.find(pane).itemActivated(item)
 
   deactivate: ->
-    atom.workspaceView.off 'pane:active-item-changed'
+    @disposable.dispose()
