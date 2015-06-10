@@ -4,7 +4,7 @@ class TabSwitcher
 
   itemActivated: (item) ->
     keyup = (event) =>
-      if not (event.ctrlKey or event.altKey or event.shiftKey or event.shiftKey)
+      if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
         @moveTab(item)
         document.removeEventListener 'keyup', keyup
     document.addEventListener 'keyup', keyup
