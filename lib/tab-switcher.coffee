@@ -7,7 +7,9 @@ class TabSwitcher
       if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
         @moveTab(item)
         document.removeEventListener 'keyup', keyup
+        document.removeEventListener 'mouseup', keyup
     document.addEventListener 'keyup', keyup
+    document.addEventListener 'mouseup', keyup
 
   moveTab: (item) ->
     unless @pane.isDestroyed() or item not in @pane.getItems()
