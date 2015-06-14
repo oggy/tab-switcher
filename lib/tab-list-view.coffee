@@ -1,4 +1,5 @@
 Path = require 'path'
+{TextEditor} = require 'atom'
 
 class TabListView
   constructor: (tabSwitcher) ->
@@ -18,15 +19,20 @@ class TabListView
 
   initializeTab: (tab) ->
     icon = document.createElement('span')
-    if tab.item.getPath
+    if tab.item.constructor == TextEditor
       icon.classList.add('icon', 'icon-file-text')
       icon.setAttribute('data-name', Path.extname(tab.item.getPath()))
+      sublabel = document.createElement('span')
+      sublabel.classList.add('sublabel')
+      sublabel.innerText = Path.relative(atom.project.getPaths()[0], Path.dirname(tab.item.getPath()))
     else
       icon.classList.add('icon', 'icon-tools')
     label = document.createTextNode(tab.item.getTitle())
     li = document.createElement('li')
     li.appendChild(icon)
     li.appendChild(label)
+    if sublabel
+      li.appendChild(sublabel)
     tab.view = li
 
   show: ->
