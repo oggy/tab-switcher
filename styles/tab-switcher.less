@@ -1,0 +1,36 @@
+atom-panel.modal.tab-switcher-panel {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 1em;
+
+  background-color: rgba(32, 33, 35, 0.7);
+}
+
+ol.tab-switcher-tab-list {
+  margin: 0;
+  padding: 1em 0;
+  list-style: none;
+  font-size: 150%;
+  color: white;
+
+  .icon {
+    margin: 0em 0.5em 0em 1em;
+  }
+
+  li.selected {
+    background: linear-gradient(to bottom, #3380db, #105db8);
+    border-top: solid 1px white;
+    border-bottom: solid 1px white;
+  }
+
+  li:not(.selected) {
+    border-top: solid 2px rgba(0, 0, 0, 0);
+    border-bottom: solid 2px rgba(0, 0, 0, 0);
+  }
+}
