@@ -1,6 +1,15 @@
 Path = require 'path'
 {TextEditor} = require 'atom'
 
+makeElement = (name, attributes, children) ->
+  element = document.createElement(name)
+  for name, value of attributes
+    element.setAttribute(name, value)
+  if children
+    for child in children
+      element.appendChild(child)
+  return element
+
 class TabListView
   constructor: (tabSwitcher) ->
     @tabSwitcher = tabSwitcher
@@ -18,22 +27,18 @@ class TabListView
     @modalPanel.destroy()
 
   initializeTab: (tab) ->
-    icon = document.createElement('span')
-    if tab.item.constructor == TextEditor
-      icon.classList.add('icon', 'icon-file-text')
-      icon.setAttribute('data-name', Path.extname(tab.item.getPath()))
-      sublabel = document.createElement('span')
-      sublabel.classList.add('sublabel')
-      sublabel.innerText = Path.relative(atom.project.getPaths()[0], Path.dirname(tab.item.getPath()))
-    else
-      icon.classList.add('icon', 'icon-tools')
     label = document.createTextNode(tab.item.getTitle())
-    li = document.createElement('li')
-    li.appendChild(icon)
-    li.appendChild(label)
-    if sublabel
-      li.appendChild(sublabel)
-    tab.view = li
+    if tab.item.constructor == TextEditor
+      path = tab.item.getPath()
+      icon = makeElement('span', {class: 'icon icon-file-text', 'data-name': Path.extname(path)})
+      dir = Path.relative(atom.project.getPaths()[0], Path.dirname(path))
+      sublabelText = document.createTextNode(dir)
+      sublabel = makeElement('span', {class: 'sublabel'}, [sublabelText])
+      labels = makeElement('span', {class: 'labels'}, [label, sublabel])
+    else
+      icon = makeElement('span', {class: 'icon icon-tools'})
+      labels = label
+    tab.view = makeElement('li', {}, [icon, labels])
 
   show: ->
     while @ol.children.length > 0
