@@ -1,5 +1,5 @@
 Path = require 'path'
-{TextEditor} = require 'atom'
+{CompositeDisposable, TextEditor} = require 'atom'
 
 makeElement = (name, attributes, children) ->
   element = document.createElement(name)
@@ -13,6 +13,7 @@ makeElement = (name, attributes, children) ->
 class TabListView
   constructor: (tabSwitcher) ->
     @tabSwitcher = tabSwitcher
+    @disposable = new CompositeDisposable
 
     @ol = document.createElement('ol')
     @ol.classList.add('tab-switcher-tab-list')
@@ -25,16 +26,25 @@ class TabListView
 
   destroy: ->
     @modalPanel.destroy()
+    @disposable.dispose()
 
   initializeTab: (tab) ->
-    label = document.createTextNode(tab.item.getTitle())
-    if tab.item.constructor == TextEditor
+    tab.isEditor = tab.item.constructor == TextEditor
+    tab.modifiedIcon = makeElement('span', {class: 'modified-icon'})
+    label = makeElement('span', {class: 'tab-label'}, [document.createTextNode(tab.item.getTitle())])
+
+    if tab.isEditor
+      toggleModified = =>
+        action = if tab.item.isModified() then 'add' else 'remove'
+        label.classList[action]('modified')
+      @disposable.add tab.item.onDidChangeModified(toggleModified)
+      toggleModified()
       path = tab.item.getPath()
       icon = makeElement('span', {class: 'icon icon-file-text', 'data-name': Path.extname(path)})
       dir = Path.relative(atom.project.getPaths()[0], Path.dirname(path))
       sublabelText = document.createTextNode(dir)
-      sublabel = makeElement('span', {class: 'sublabel'}, [sublabelText])
-      labels = makeElement('span', {class: 'labels'}, [label, sublabel])
+      sublabel = makeElement('span', {class: 'tab-sublabel'}, [sublabelText])
+      labels = makeElement('span', {class: 'tab-labels'}, [tab.modifiedIcon, label, sublabel])
     else
       icon = makeElement('span', {class: 'icon icon-tools'})
       labels = label

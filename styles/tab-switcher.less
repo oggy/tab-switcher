@@ -26,28 +26,37 @@ ol.tab-switcher-tab-list {
   font-size: 150%;
   color: white;
 
-  .icon {
-    margin: 0em 0.5em 0em 1em;
+  li {
+    display: flex;
+
+    &.selected {
+      background: linear-gradient(to bottom, #105db8, #3380db);
+      border-top: solid 1px white;
+      border-bottom: solid 1px white;
+    }
+
+    &:not(.selected) {
+      border-top: solid 1px transparent;
+      border-bottom: solid 1px transparent;
+    }
   }
 
-  .sublabel {
+  .icon {
+    margin: 0 0.5em;
+  }
+
+  .tab-sublabel {
     font-size: 75%;
     color: #d4d4d4;
     margin: 0 1em;
   }
 
-  li {
-    display: flex;
-  }
-
-  li.selected {
-    background: linear-gradient(to bottom, #105db8, #3380db);
-    border-top: solid 1px white;
-    border-bottom: solid 1px white;
-  }
-
-  li:not(.selected) {
-    border-top: solid 1px transparent;
-    border-bottom: solid 1px transparent;
+  .tab-label.modified {
+    &::before {
+      margin-right: 0.2em;
+      font-weight: bold;
+      color: #0098ff;
+      content: '\26ac';
+    }
   }
 }
