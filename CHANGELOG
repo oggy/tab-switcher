@@ -1,3 +1,9 @@
+## 1.0.0 (2015-06-15)
+
+* Witch-inspired tab menu (install file-icons package for icons).
+* Don't change order of tabs in the tab bar.
+* Instead use `alt-[` and `alt-]` to change tabs via the menu.
+
 ## 0.4.0 (2015-06-07)
 
 * Move tab when modifiers are released, instead of using a 1 second timeout.
