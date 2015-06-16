@@ -15,6 +15,12 @@ OS window switcher.
 * `alt-[` previous tab
 * `alt-]` next tab
 
+## Icons
+
+Icons are optional, and are provided by the [file-icons][file-icons] package.
+
+[file-icons]: https://github.com/DanBrooker/file-icons
+
 ## Contributing
 
  * [Bug reports](https://github.com/oggy/tab-switcher/issues)
