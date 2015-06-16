@@ -3,7 +3,7 @@
 [Atom][atom] package that let's you easily and elegantly switch between your
 most recently active tabs. Like "Command-TAB" or "Alt-TAB" for applications.
 
-![Screenshot](https://raw.github.com/oggy/tab-switcher/master/doc/tab-switcher.gif)
+![Screenshot](https://raw.githubusercontent.com/oggy/tab-switcher/master/doc/tab-switcher.gif)
 
 Visual design is inspired by [Witch](http://manytricks.com/witch), a slick Mac
 OS window switcher.
