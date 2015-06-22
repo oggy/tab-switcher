@@ -9,7 +9,9 @@ class TabSwitcher
     @view = new TabListView(@)
     @disposable = new CompositeDisposable()
 
-    @disposable.add @pane.onDidDestroy => @destroy
+    @disposable.add @pane.onDidDestroy =>
+      @destroy
+      delete TabSwitcher.instances[@pane.id]
 
     @disposable.add @pane.onDidAddItem (item) =>
       tab = {item: item.item}
