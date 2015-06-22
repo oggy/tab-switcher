@@ -19,12 +19,32 @@ TabSwitcher =
     for paneId, tabList of @tabLists
       tabList.destroy()
 
+  serialize: ->
+    panesState = atom.workspace.getPanes().map (pane) =>
+      tabList = @tabLists[pane.id]
+      tabList.serialize()
+      if tabList then tabList.serialize() else null
+    {version: 1, panes: panesState}
+
+  deserialize: (state) ->
+    return if state.version != 1
+    panes = atom.workspace.getPanes()
+    for paneState, i in state.panes
+      pane = panes[i]
+      continue if paneState is null or pane is null
+      @tabLists[pane.id] = new TabList(pane, paneState, state.version)
+
 module.exports =
   activate: (state) ->
     @disposable = atom.commands.add 'atom-workspace',
       'tab-switcher:next': -> TabSwitcher.currentList()?.next()
       'tab-switcher:previous': -> TabSwitcher.currentList()?.previous()
+    if state?.version
+      TabSwitcher.deserialize(state)
 
   deactivate: ->
     @disposable.dispose()
     TabSwitcher.destroyLists()
+
+  serialize: ->
+    TabSwitcher.serialize()

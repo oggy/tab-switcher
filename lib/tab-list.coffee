@@ -3,9 +3,9 @@ TabListView = require './tab-list-view'
 
 module.exports =
 class TabList
-  constructor: (pane) ->
+  constructor: (pane, data, version) ->
     @pane = pane
-    @tabs = pane.getItems().map (item) -> {item: item}
+    @tabs = @_buildTabs(pane.getItems(), data, version)
     @selection = null
     @view = new TabListView(@)
     @disposable = new CompositeDisposable()
@@ -27,10 +27,28 @@ class TabList
     @disposable.add @pane.onDidDestroy =>
       @tabs = []
 
+  _buildTabs: (items, data, version) ->
+    tabs = items.map (item) -> {item: item}
+    if data
+      titleOrder = data.tabs.map (item) -> item.title
+      newTabs = 0
+      ordering = tabs.map (tab, index) ->
+        key = titleOrder.indexOf(tab.item.getTitle?() or null)
+        if key == -1
+          key = titleOrder.length + newTabs
+          newTabs += 1
+        {tab: tab, key: key}
+
+      tabs = ordering.sort((a, b) -> a.key - b.key).map((o) -> o.tab)
+    tabs
+
   destroy: ->
     @pane = null
     @disposable.dispose()
     @view.destroy()
+
+  serialize: ->
+    {tabs: @tabs.map (tab) -> {title: tab.item.getTitle?() or null}}
 
   next: ->
     if @tabs.length == 0

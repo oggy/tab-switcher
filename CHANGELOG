@@ -1,3 +1,7 @@
+## LATEST
+
+* Tab list order is persisted across editor sessions.
+
 ## 1.0.1 (2015-06-18)
 
 * Fix styling issues with One and Light UI themes.
