@@ -31,7 +31,7 @@ TabSwitcher =
     panes = atom.workspace.getPanes()
     for paneState, i in state.panes
       pane = panes[i]
-      continue if paneState is null or pane is null
+      continue if paneState is null or pane is undefined
       @tabLists[pane.id] = new TabList(pane, paneState, state.version)
 
 module.exports =
