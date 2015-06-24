@@ -57,6 +57,10 @@ class TabListView
       selected = @tabSwitcher.selection == index
       tab.view.classList[if selected then 'add' else 'remove']('selected')
       @ol.appendChild(tab.view)
+    if (selectedTab = @tabSwitcher.tabs[@tabSwitcher.selection])
+      view = selectedTab.view
+      offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
+      @ol.scrollTop = Math.max(offset, 0)
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
     panel.style.height = @ol.offsetHeight + 'px'
