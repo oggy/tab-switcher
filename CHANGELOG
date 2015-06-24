@@ -1,4 +1,4 @@
-## LATEST
+## 1.1.0 (2015-06-24)
 
 * Tab list order is persisted across editor sessions.
 * Tab list scrolls as needed.
