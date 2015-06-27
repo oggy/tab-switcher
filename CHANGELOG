@@ -1,3 +1,7 @@
+## 1.1.1 (2015-06-27)
+
+* Fix list styling in certain scenarios.
+
 ## 1.1.0 (2015-06-24)
 
 * Tab list order is persisted across editor sessions.
