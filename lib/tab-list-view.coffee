@@ -15,11 +15,11 @@ class TabListView
     @tabSwitcher = tabSwitcher
     @disposable = new CompositeDisposable
 
-    @ol = document.createElement('ol')
-    @ol.classList.add('tab-switcher-tab-list')
+    @ol = makeElement('ol', 'class': 'tab-switcher-tab-list')
+    vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
 
-    @modalPanel = atom.workspace.addModalPanel(item: @ol, visible: false)
-    @ol.closest('atom-panel').classList.add('tab-switcher-panel')
+    @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
+    vert.closest('atom-panel').classList.add('tab-switcher-panel')
 
     for tab in @tabSwitcher.tabs
       @initializeTab(tab)
@@ -34,7 +34,7 @@ class TabListView
     label = makeElement('span', {class: 'tab-label'}, [document.createTextNode(tab.item.getTitle())])
 
     if tab.isEditor
-      toggleModified = =>
+      toggleModified = ->
         action = if tab.item.isModified() then 'add' else 'remove'
         label.classList[action]('modified')
       @disposable.add tab.item.onDidChangeModified(toggleModified)
@@ -63,7 +63,6 @@ class TabListView
       @ol.scrollTop = Math.max(offset, 0)
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
-    panel.style.height = @ol.offsetHeight + 'px'
 
   hide: ->
     @modalPanel.hide()
