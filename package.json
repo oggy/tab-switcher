@@ -1,7 +1,7 @@
 {
   "name": "tab-switcher",
   "main": "./lib/tab-switcher",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Least recently used tab ordering for Atom.",
   "activationCommands": {
     "atom-workspace": [
