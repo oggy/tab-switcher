@@ -1,4 +1,4 @@
-{CompositeDisposable, Emitter} = require 'atom'
+{CompositeDisposable} = require 'atom'
 TabListView = require './tab-list-view'
 
 module.exports =
@@ -8,12 +8,11 @@ class TabList
     @lastId = 0
     @tabs = @_buildTabs(pane.getItems(), data, version)
     @currentIndex = null
-    @emitter = new Emitter
     @view = new TabListView(@)
     @disposable = new CompositeDisposable
 
     for tab in @tabs
-      @emitter.emit 'did-add-tab', tab
+      @view.tabAdded(tab)
 
     @disposable.add @pane.onDidDestroy =>
       @destroy
@@ -21,19 +20,19 @@ class TabList
     @disposable.add @pane.onDidAddItem (item) =>
       tab = {id: @lastId += 1, item: item.item}
       @tabs.push(tab)
-      @emitter.emit 'did-add-tab', tab
+      @view.tabAdded(tab)
 
     @disposable.add @pane.onDidRemoveItem (item) =>
       index = @_findItemIndex(item.item)
       @tabs.splice(index, 1)
-      @emitter.emit 'did-remove-tab', tab
+      @view.tabRemoved(tab)
 
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
 
     @disposable.add @pane.onDidDestroy =>
       for tab in @tabs
-        @emitter.emit 'did-remove-tab', tab
+        @view.tabRemoved(tab)
       @tabs = []
 
   _buildTabs: (items, data, version) ->
@@ -51,12 +50,6 @@ class TabList
       tabs = ordering.sort((a, b) -> a.key - b.key).map((o) -> o.tab)
     tabs
 
-  onDidAddTab: (callback) ->
-    @emitter.on 'did-add-tab', callback
-
-  onDidRemoveTab: (callback) ->
-    @emitter.on 'did-remove-tab', callback
-
   destroy: ->
     @pane = null
     @disposable.dispose()
@@ -67,23 +60,28 @@ class TabList
 
   next: ->
     if @tabs.length == 0
-      @currentIndex = null
-      return
-
-    @currentIndex ?= 0
-    @currentIndex += 1
-    @currentIndex = 0 if @currentIndex >= @tabs.length
-    @_start()
+      @_setCurrentIndex(null)
+    else
+      index = (@currentIndex ? 0) + 1
+      index -= @tabs.length if index >= @tabs.length
+      @_setCurrentIndex(index)
 
   previous: ->
     if @tabs.length == 0
-      @currentIndex = null
-      return
+      @_setCurrentIndex(null)
+    else
+      index = (@currentIndex ? 0) - 1
+      index += @tabs.length if index < 0
+      @_setCurrentIndex(index)
 
-    @currentIndex ?= 0
-    @currentIndex -= 1
-    @currentIndex += @tabs.length if @currentIndex < 0
-    @_start()
+  setCurrentId: (id) ->
+    index = @tabs.map((tab) -> tab.id).indexOf(id)
+    return if index == -1
+    @_setCurrentIndex(index)
+
+  selectId: (id) ->
+    @setCurrentId(id)
+    @_select()
 
   _moveItemToFront: (item) ->
     index = @_findItemIndex(item)
@@ -109,6 +107,15 @@ class TabList
       document.addEventListener 'mouseup', keyup
     @view.show()
 
+  _setCurrentIndex: (index) ->
+    if index == null
+      @view.currentTabChanged(null)
+      @currentIndex = null
+    else
+      @currentIndex = index
+      @view.currentTabChanged(@tabs[index])
+      @_start()
+
   _select: ->
     if @switching
       @switching = false
@@ -117,4 +124,5 @@ class TabList
           @pane.activateItem(@tabs[@currentIndex].item)
           @pane.activate()
         @currentIndex = null
+        @view.currentTabChanged(null)
     @view.hide()

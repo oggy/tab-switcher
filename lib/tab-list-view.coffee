@@ -15,6 +15,7 @@ class TabListView
     @tabSwitcher = tabSwitcher
     @disposable = new CompositeDisposable
     @items = {}
+    @currentItem = null
 
     @ol = makeElement('ol', 'class': 'tab-switcher-tab-list', 'tabindex': '-1')
     vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
@@ -22,11 +23,28 @@ class TabListView
     @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
     vert.closest('atom-panel').classList.add('tab-switcher')
 
-    @disposable.add tabSwitcher.onDidAddTab (tab) =>
-      @items[tab.id] = @_initializeTab(tab)
+    @disposable.add @ol.addEventListener 'mouseover', (event) =>
+      if (li = event.target.closest('li'))
+        id = parseInt(li.getAttribute('data-id'))
+        tabSwitcher.setCurrentId(id)
 
-    @disposable.add tabSwitcher.onDidRemoveTab (tab) =>
-      delete @items[tab.id]
+    @disposable.add @ol.addEventListener 'click', (event) =>
+      if (li = event.target.closest('li'))
+        id = parseInt(li.getAttribute('data-id'))
+        tabSwitcher.selectId(id)
+
+  tabAdded: (tab) ->
+    @items[tab.id] = @_initializeTab(tab)
+
+  tabRemoved: (tab) ->
+    delete @items[tab.id]
+
+  currentTabChanged: (tab) ->
+    if @currentItem
+      @currentItem.classList.remove('current')
+    if tab
+      @currentItem = @items[tab.id]
+      @currentItem.classList.add('current')
 
   destroy: ->
     @modalPanel.destroy()
@@ -36,8 +54,6 @@ class TabListView
     while @ol.children.length > 0
       @ol.removeChild(@ol.children[0])
     for tab, index in @tabSwitcher.tabs
-      current = @tabSwitcher.currentIndex == index
-      @items[tab.id].classList[if current then 'add' else 'remove']('current')
       @ol.appendChild(@items[tab.id])
     if (currentTab = @tabSwitcher.tabs[@tabSwitcher.currentIndex])
       view = @items[currentTab.id]
@@ -71,6 +87,6 @@ class TabListView
       icon = makeElement('span', {class: 'icon icon-tools'})
       labels = label
 
-    makeElement('li', {}, [icon, labels])
+    makeElement('li', {'data-id': tab.id}, [icon, labels])
 
 module.exports = TabListView
