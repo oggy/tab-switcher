@@ -42,8 +42,7 @@ class TabListView
 
     @_buildList()
 
-    @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
-    vert.closest('atom-panel').classList.add('tab-switcher')
+    @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false, className: 'tab-switcher')
 
     @disposable.add @ol.addEventListener 'mouseover', (event) =>
       if (li = event.target.closest('li'))
@@ -85,6 +84,7 @@ class TabListView
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
     @ol.focus()
+    setTimeout => @modalPanel.getItem().parentNode.classList.add('is-visible')
 
     invokeSelect = (event) =>
       if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
@@ -105,6 +105,7 @@ class TabListView
       @ol.removeEventListener 'blur', invokeCancel
 
   hide: ->
+    @modalPanel.getItem().parentNode.classList.remove('is-visible')
     @modalPanel.hide()
 
   _makeItem: (tab) ->
