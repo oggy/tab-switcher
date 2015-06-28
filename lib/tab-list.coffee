@@ -1,34 +1,43 @@
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Emitter} = require 'atom'
 TabListView = require './tab-list-view'
 
 module.exports =
 class TabList
   constructor: (pane, data, version) ->
     @pane = pane
+    @lastId = 0
     @tabs = @_buildTabs(pane.getItems(), data, version)
     @selection = null
+    @emitter = new Emitter
     @view = new TabListView(@)
-    @disposable = new CompositeDisposable()
+    @disposable = new CompositeDisposable
 
-    @disposable.add @pane.onDidDestroy => @destroy
+    for tab in @tabs
+      @emitter.emit 'did-add-tab', tab
+
+    @disposable.add @pane.onDidDestroy =>
+      @destroy
 
     @disposable.add @pane.onDidAddItem (item) =>
-      tab = {item: item.item}
+      tab = {id: @lastId += 1, item: item.item}
       @tabs.push(tab)
-      @view.initializeTab(tab)
+      @emitter.emit 'did-add-tab', tab
 
     @disposable.add @pane.onDidRemoveItem (item) =>
       index = @_findItemIndex(item.item)
       @tabs.splice(index, 1)
+      @emitter.emit 'did-remove-tab', tab
 
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
 
     @disposable.add @pane.onDidDestroy =>
+      for tab in @tabs
+        @emitter.emit 'did-remove-tab', tab
       @tabs = []
 
   _buildTabs: (items, data, version) ->
-    tabs = items.map (item) -> {item: item}
+    tabs = items.map (item) => {id: @lastId += 1, item: item}
     if data
       titleOrder = data.tabs.map (item) -> item.title
       newTabs = 0
@@ -41,6 +50,12 @@ class TabList
 
       tabs = ordering.sort((a, b) -> a.key - b.key).map((o) -> o.tab)
     tabs
+
+  onDidAddTab: (callback) ->
+    @emitter.on 'did-add-tab', callback
+
+  onDidRemoveTab: (callback) ->
+    @emitter.on 'did-remove-tab', callback
 
   destroy: ->
     @pane = null

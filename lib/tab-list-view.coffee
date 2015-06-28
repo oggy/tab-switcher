@@ -14,6 +14,7 @@ class TabListView
   constructor: (tabSwitcher) ->
     @tabSwitcher = tabSwitcher
     @disposable = new CompositeDisposable
+    @items = {}
 
     @ol = makeElement('ol', 'class': 'tab-switcher-tab-list', 'tabindex': '-1')
     vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
@@ -21,14 +22,35 @@ class TabListView
     @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
     vert.closest('atom-panel').classList.add('tab-switcher')
 
-    for tab in @tabSwitcher.tabs
-      @initializeTab(tab)
+    @disposable.add tabSwitcher.onDidAddTab (tab) =>
+      @items[tab.id] = @_initializeTab(tab)
+
+    @disposable.add tabSwitcher.onDidRemoveTab (tab) =>
+      delete @items[tab.id]
 
   destroy: ->
     @modalPanel.destroy()
     @disposable.dispose()
 
-  initializeTab: (tab) ->
+  show: ->
+    while @ol.children.length > 0
+      @ol.removeChild(@ol.children[0])
+    for tab, index in @tabSwitcher.tabs
+      selected = @tabSwitcher.selection == index
+      @items[tab.id].classList[if selected then 'add' else 'remove']('selected')
+      @ol.appendChild(@items[tab.id])
+    if (selectedTab = @tabSwitcher.tabs[@tabSwitcher.selection])
+      view = @items[selectedTab.id]
+      offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
+      @ol.scrollTop = Math.max(offset, 0)
+    panel = @ol.closest('atom-panel')
+    @modalPanel.show()
+    @ol.focus()
+
+  hide: ->
+    @modalPanel.hide()
+
+  _initializeTab: (tab) ->
     tab.isEditor = tab.item.constructor == TextEditor
     tab.modifiedIcon = makeElement('span', {class: 'modified-icon'})
     label = makeElement('span', {class: 'tab-label'}, [document.createTextNode(tab.item.getTitle())])
@@ -48,24 +70,7 @@ class TabListView
     else
       icon = makeElement('span', {class: 'icon icon-tools'})
       labels = label
-    tab.view = makeElement('li', {}, [icon, labels])
 
-  show: ->
-    while @ol.children.length > 0
-      @ol.removeChild(@ol.children[0])
-    for tab, index in @tabSwitcher.tabs
-      selected = @tabSwitcher.selection == index
-      tab.view.classList[if selected then 'add' else 'remove']('selected')
-      @ol.appendChild(tab.view)
-    if (selectedTab = @tabSwitcher.tabs[@tabSwitcher.selection])
-      view = selectedTab.view
-      offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
-      @ol.scrollTop = Math.max(offset, 0)
-    panel = @ol.closest('atom-panel')
-    @modalPanel.show()
-    @ol.focus()
-
-  hide: ->
-    @modalPanel.hide()
+    makeElement('li', {}, [icon, labels])
 
 module.exports = TabListView
