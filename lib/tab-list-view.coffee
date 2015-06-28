@@ -58,7 +58,7 @@ class TabListView
       toggleModified()
       path = tab.item.getPath()
       icon = makeElement('span', {class: 'icon icon-file-text', 'data-name': Path.extname(path)})
-      dir = dirname(path)
+      dir = if path then dirname(path) else ''
       sublabelText = document.createTextNode(dir)
       sublabel = makeElement('span', {class: 'tab-sublabel'}, [sublabelText])
       labels = makeElement('span', {class: 'tab-labels'}, [tab.modifiedIcon, label, sublabel])
