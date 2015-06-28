@@ -142,8 +142,8 @@ class TabList
   _select: ->
     if @switching
       @switching = false
-      if @currentIndex
-        if 0 < @currentIndex < @tabs.length
+      unless @currentIndex is null
+        if 0 <= @currentIndex < @tabs.length
           @pane.activateItem(@tabs[@currentIndex].item)
           @pane.activate()
         @currentIndex = null
