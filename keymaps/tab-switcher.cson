@@ -1,3 +1,9 @@
 "atom-workspace":
   "alt-[": "tab-switcher:previous"
   "alt-]": "tab-switcher:next"
+
+"ol.tab-switcher-tab-list":
+  "alt-up": "tab-switcher:previous"
+  "alt-p": "tab-switcher:previous"
+  "alt-down": "tab-switcher:next"
+  "alt-n": "tab-switcher:next"

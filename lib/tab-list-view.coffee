@@ -15,7 +15,7 @@ class TabListView
     @tabSwitcher = tabSwitcher
     @disposable = new CompositeDisposable
 
-    @ol = makeElement('ol', 'class': 'tab-switcher-tab-list')
+    @ol = makeElement('ol', 'class': 'tab-switcher-tab-list', 'tabindex': '-1')
     vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
 
     @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
@@ -63,6 +63,7 @@ class TabListView
       @ol.scrollTop = Math.max(offset, 0)
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
+    @ol.focus()
 
   hide: ->
     @modalPanel.hide()
