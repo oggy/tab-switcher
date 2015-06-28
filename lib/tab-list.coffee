@@ -100,5 +100,6 @@ class TabList
       if @selection
         if 0 < @selection < @tabs.length
           @pane.activateItem(@tabs[@selection].item)
+          @pane.activate()
         @selection = null
     @view.hide()
