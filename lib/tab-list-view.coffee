@@ -50,7 +50,6 @@ class TabListView
     tab.view = makeElement('li', {}, [icon, labels])
 
   show: ->
-    @visible = true
     while @ol.children.length > 0
       @ol.removeChild(@ol.children[0])
     for tab, index in @tabSwitcher.tabs
