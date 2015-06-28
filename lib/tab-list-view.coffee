@@ -19,7 +19,7 @@ class TabListView
     vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
 
     @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
-    vert.closest('atom-panel').classList.add('tab-switcher-panel')
+    vert.closest('atom-panel').classList.add('tab-switcher')
 
     for tab in @tabSwitcher.tabs
       @initializeTab(tab)
