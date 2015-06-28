@@ -12,17 +12,17 @@ makeElement = (name, attributes, children) ->
 
 home = if process.platform == 'win32' then process.env.USERPROFILE else process.env.HOME
 
-indir = (dir, path) ->
-  return Path.relative(dir, path).slice(0, 2) != '..'
+isUnder = (dir, path) ->
+  Path.relative(path, dir).startsWith('..')
 
-dirname = (path) ->
+projectRelativePath = (path) ->
   path = Path.dirname(path)
-  dirs = atom.project.getPaths()
-  ws = (d for d in dirs when indir(d, path))[0]
-  if ws
-    ws = Path.dirname(ws) if dirs.length > 1
-    return Path.relative(ws, path)
-  if indir(home, path)
+  [root, relativePath] = atom.project.relativizePath(path)
+  if root
+    if atom.project.getPaths().length > 1
+      relativePath = Path.basename(root) + Path.sep + relativePath
+    relativePath
+  else if home and isUnder(home, path)
     '~' + Path.sep + Path.relative(home, path)
   else
     path
@@ -102,7 +102,7 @@ class TabListView
       toggleModified()
       path = tab.item.getPath()
       icon = makeElement('span', {class: 'icon icon-file-text', 'data-name': Path.extname(path)})
-      dir = if path then dirname(path) else ''
+      dir = if path then projectRelativePath(path) else ''
       sublabelText = document.createTextNode(dir)
       sublabel = makeElement('span', {class: 'tab-sublabel'}, [sublabelText])
       labels = makeElement('span', {class: 'tab-labels'}, [tab.modifiedIcon, label, sublabel])
