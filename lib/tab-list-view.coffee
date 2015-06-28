@@ -18,8 +18,7 @@ class TabListView
     @ol = makeElement('ol', 'class': 'tab-switcher-tab-list')
     vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
 
-    @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
-    vert.closest('atom-panel').classList.add('tab-switcher-panel')
+    @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false, className: 'tab-switcher-panel')
 
     for tab in @tabSwitcher.tabs
       @initializeTab(tab)
@@ -63,8 +62,11 @@ class TabListView
       @ol.scrollTop = Math.max(offset, 0)
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
+    show = => @modalPanel.getItem().parentNode.classList.add('is-visible')
+    setTimeout show
 
   hide: ->
+    @modalPanel.getItem().parentNode.classList.remove('is-visible')
     @modalPanel.hide()
 
 module.exports = TabListView
