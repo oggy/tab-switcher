@@ -4,6 +4,8 @@
 
 "ol.tab-switcher-tab-list":
   "alt-up": "tab-switcher:previous"
-  "alt-p": "tab-switcher:previous"
   "alt-down": "tab-switcher:next"
+  "alt-w": "tab-switcher:close"
   "alt-n": "tab-switcher:next"
+  "alt-p": "tab-switcher:previous"
+  "alt-s": "tab-switcher:save"

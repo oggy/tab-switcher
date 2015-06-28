@@ -17,8 +17,13 @@ class TabListView
     @items = {}
     @currentItem = null
 
+    for tab in tabSwitcher.tabs
+      @items[tab.id] = @_makeItem(tab)
+
     @ol = makeElement('ol', 'class': 'tab-switcher-tab-list', 'tabindex': '-1')
     vert = makeElement('div', {'class': 'vertical-axis'}, [@ol])
+
+    @_buildList()
 
     @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false)
     vert.closest('atom-panel').classList.add('tab-switcher')
@@ -34,10 +39,15 @@ class TabListView
         tabSwitcher.selectId(id)
 
   tabAdded: (tab) ->
-    @items[tab.id] = @_initializeTab(tab)
+    @items[tab.id] = @_makeItem(tab)
+    @_buildList()
 
   tabRemoved: (tab) ->
     delete @items[tab.id]
+    @_buildList()
+
+  tabsReordered: ->
+    @_buildList()
 
   currentTabChanged: (tab) ->
     if @currentItem
@@ -51,10 +61,6 @@ class TabListView
     @disposable.dispose()
 
   show: ->
-    while @ol.children.length > 0
-      @ol.removeChild(@ol.children[0])
-    for tab, index in @tabSwitcher.tabs
-      @ol.appendChild(@items[tab.id])
     if (currentTab = @tabSwitcher.tabs[@tabSwitcher.currentIndex])
       view = @items[currentTab.id]
       offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
@@ -66,7 +72,7 @@ class TabListView
   hide: ->
     @modalPanel.hide()
 
-  _initializeTab: (tab) ->
+  _makeItem: (tab) ->
     tab.isEditor = tab.item.constructor == TextEditor
     tab.modifiedIcon = makeElement('span', {class: 'modified-icon'})
     label = makeElement('span', {class: 'tab-label'}, [document.createTextNode(tab.item.getTitle())])
@@ -88,5 +94,11 @@ class TabListView
       labels = label
 
     makeElement('li', {'data-id': tab.id}, [icon, labels])
+
+  _buildList: ->
+    while @ol.children.length > 0
+      @ol.removeChild(@ol.children[0])
+    for tab in @tabSwitcher.tabs
+      @ol.appendChild(@items[tab.id])
 
 module.exports = TabListView

@@ -11,9 +11,6 @@ class TabList
     @view = new TabListView(@)
     @disposable = new CompositeDisposable
 
-    for tab in @tabs
-      @view.tabAdded(tab)
-
     @disposable.add @pane.onDidDestroy =>
       @destroy
 
@@ -24,8 +21,8 @@ class TabList
 
     @disposable.add @pane.onDidRemoveItem (item) =>
       index = @_findItemIndex(item.item)
-      @tabs.splice(index, 1)
-      @view.tabRemoved(tab)
+      return if index is null
+      @_removeTabAtIndex(index)
 
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
@@ -83,17 +80,43 @@ class TabList
     @setCurrentId(id)
     @_select()
 
+  saveCurrent: ->
+    tab = @tabs[@currentIndex]
+    return if tab is undefined
+    tab.item.save?()
+
+  closeCurrent: ->
+    tab = @tabs[@currentIndex]
+    return if tab is undefined
+    @pane.removeItem(tab.item)
+
   _moveItemToFront: (item) ->
     index = @_findItemIndex(item)
     unless index == -1
       tabs = @tabs.splice(index, 1)
       @tabs.unshift(tabs[0])
+      @view.tabsReordered()
 
   _findItemIndex: (item) ->
     for tab, index in @tabs
       if tab.item == item
         return index
     return null
+
+  _removeTabAtIndex: (index) ->
+    if index == @currentIndex
+      if index == @tabs.length - 1
+        newCurrentIndex = if index == 0 then null else @currentIndex - 1
+      else
+        newCurrentIndex = @currentIndex
+    else if index < @currentIndex
+      newCurrentIndex = @currentIndex - 1
+
+    removed = @tabs.splice(index, 1)
+    @view.tabRemoved(removed[0])
+
+    if newCurrentIndex isnt null
+        @_setCurrentIndex(newCurrentIndex)
 
   _start: (item) ->
     if not @switching
@@ -109,8 +132,8 @@ class TabList
 
   _setCurrentIndex: (index) ->
     if index == null
-      @view.currentTabChanged(null)
       @currentIndex = null
+      @view.currentTabChanged(null)
     else
       @currentIndex = index
       @view.currentTabChanged(@tabs[index])
