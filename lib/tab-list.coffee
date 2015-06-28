@@ -7,7 +7,7 @@ class TabList
     @pane = pane
     @lastId = 0
     @tabs = @_buildTabs(pane.getItems(), data, version)
-    @selection = null
+    @currentIndex = null
     @emitter = new Emitter
     @view = new TabListView(@)
     @disposable = new CompositeDisposable
@@ -67,22 +67,22 @@ class TabList
 
   next: ->
     if @tabs.length == 0
-      @selection = null
+      @currentIndex = null
       return
 
-    @selection ?= 0
-    @selection += 1
-    @selection = 0 if @selection >= @tabs.length
+    @currentIndex ?= 0
+    @currentIndex += 1
+    @currentIndex = 0 if @currentIndex >= @tabs.length
     @_start()
 
   previous: ->
     if @tabs.length == 0
-      @selection = null
+      @currentIndex = null
       return
 
-    @selection ?= 0
-    @selection -= 1
-    @selection += @tabs.length if @selection < 0
+    @currentIndex ?= 0
+    @currentIndex -= 1
+    @currentIndex += @tabs.length if @currentIndex < 0
     @_start()
 
   _moveItemToFront: (item) ->
@@ -102,19 +102,19 @@ class TabList
       @switching = true
       keyup = (event) =>
         if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
-          @_stop()
+          @_select()
           document.removeEventListener 'keyup', keyup
           document.removeEventListener 'mouseup', keyup
       document.addEventListener 'keyup', keyup
       document.addEventListener 'mouseup', keyup
     @view.show()
 
-  _stop: ->
+  _select: ->
     if @switching
       @switching = false
-      if @selection
-        if 0 < @selection < @tabs.length
-          @pane.activateItem(@tabs[@selection].item)
+      if @currentIndex
+        if 0 < @currentIndex < @tabs.length
+          @pane.activateItem(@tabs[@currentIndex].item)
           @pane.activate()
-        @selection = null
+        @currentIndex = null
     @view.hide()

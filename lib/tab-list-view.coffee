@@ -36,11 +36,11 @@ class TabListView
     while @ol.children.length > 0
       @ol.removeChild(@ol.children[0])
     for tab, index in @tabSwitcher.tabs
-      selected = @tabSwitcher.selection == index
-      @items[tab.id].classList[if selected then 'add' else 'remove']('selected')
+      current = @tabSwitcher.currentIndex == index
+      @items[tab.id].classList[if current then 'add' else 'remove']('current')
       @ol.appendChild(@items[tab.id])
-    if (selectedTab = @tabSwitcher.tabs[@tabSwitcher.selection])
-      view = @items[selectedTab.id]
+    if (currentTab = @tabSwitcher.tabs[@tabSwitcher.currentIndex])
+      view = @items[currentTab.id]
       offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
       @ol.scrollTop = Math.max(offset, 0)
     panel = @ol.closest('atom-panel')
