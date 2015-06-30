@@ -28,8 +28,6 @@ class TabList
       @_moveItemToFront(item)
 
     @disposable.add @pane.onDidDestroy =>
-      for tab in @tabs
-        @view.tabRemoved(tab)
       @tabs = []
 
   _buildTabs: (items, data, version) ->
