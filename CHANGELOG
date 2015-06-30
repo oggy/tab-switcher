@@ -1,8 +1,10 @@
-## LATEST
+## 1.2.0 (2015-06-30)
 
 * You can now select tabs in the list with the mouse.
 * alt-s saves files from the tab list.
 * alt-w closes tabs from the tab list.
+* Better directory names in tab list when multiple project folders are used.
+  [Eldar Gabdullin]
 
 ## 1.1.1 (2015-06-27)
 
