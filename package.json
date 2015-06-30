@@ -2,7 +2,7 @@
   "name": "tab-switcher",
   "main": "./lib/tab-switcher",
   "version": "1.1.1",
-  "description": "Least recently used tab ordering for Atom.",
+  "description": "Most recently used (MRU) tab switcher for Atom.",
   "activationCommands": {
     "atom-workspace": [
       "tab-switcher:next",
