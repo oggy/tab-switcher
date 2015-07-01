@@ -1,3 +1,8 @@
+## 1.2.1 (2015-07-01)
+
+* Fix tab list appearing when a tab is closed.
+* Clicking outside the tab list (even another window) now cancels the switch.
+
 ## 1.2.0 (2015-06-30)
 
 * You can now select tabs in the list with the mouse.
