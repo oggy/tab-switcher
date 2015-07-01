@@ -76,10 +76,6 @@ class TabList
     return if index == -1
     @_setCurrentIndex(index)
 
-  selectId: (id) ->
-    @setCurrentId(id)
-    @_select()
-
   saveCurrent: ->
     tab = @tabs[@currentIndex]
     return if tab is undefined
@@ -121,14 +117,7 @@ class TabList
   _start: (item) ->
     if not @switching
       @switching = true
-      keyup = (event) =>
-        if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
-          @_select()
-          document.removeEventListener 'keyup', keyup
-          document.removeEventListener 'mouseup', keyup
-      document.addEventListener 'keyup', keyup
-      document.addEventListener 'mouseup', keyup
-    @view.show()
+      @view.show()
 
   _setCurrentIndex: (index) ->
     if index == null
@@ -138,13 +127,21 @@ class TabList
       @currentIndex = index
       @view.currentTabChanged(@tabs[index])
 
-  _select: ->
+  select: ->
     if @switching
       @switching = false
       unless @currentIndex is null
         if 0 <= @currentIndex < @tabs.length
           @pane.activateItem(@tabs[@currentIndex].item)
           @pane.activate()
+        @currentIndex = null
+        @view.currentTabChanged(null)
+      @view.hide()
+
+  cancel: ->
+    if @switching
+      @switching = false
+      unless @currentIndex is null
         @currentIndex = null
         @view.currentTabChanged(null)
     @view.hide()

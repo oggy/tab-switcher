@@ -53,7 +53,7 @@ class TabListView
     @disposable.add @ol.addEventListener 'click', (event) =>
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
-        tabSwitcher.selectId(id)
+        tabSwitcher.select(id)
 
   tabAdded: (tab) ->
     @items[tab.id] = @_makeItem(tab)
@@ -85,6 +85,26 @@ class TabListView
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
     @ol.focus()
+
+    invokeSelect = (event) =>
+      if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
+        console.log 'selecting'
+        @tabSwitcher.select()
+        unbind()
+
+    invokeCancel = (event) =>
+      console.log 'canceling'
+      @tabSwitcher.cancel()
+      unbind()
+
+    document.addEventListener 'keyup', invokeSelect
+    document.addEventListener 'mouseup', invokeSelect
+    @ol.addEventListener 'blur', invokeCancel
+
+    unbind = =>
+      document.removeEventListener 'keyup', invokeSelect
+      document.removeEventListener 'mouseup', invokeSelect
+      @ol.removeEventListener 'blur', invokeCancel
 
   hide: ->
     @modalPanel.hide()
