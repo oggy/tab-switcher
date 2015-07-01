@@ -60,6 +60,7 @@ class TabList
       index = (@currentIndex ? 0) + 1
       index -= @tabs.length if index >= @tabs.length
       @_setCurrentIndex(index)
+    @_start()
 
   previous: ->
     if @tabs.length == 0
@@ -68,6 +69,7 @@ class TabList
       index = (@currentIndex ? 0) - 1
       index += @tabs.length if index < 0
       @_setCurrentIndex(index)
+    @_start()
 
   setCurrentId: (id) ->
     index = @tabs.map((tab) -> tab.id).indexOf(id)
@@ -135,7 +137,6 @@ class TabList
     else
       @currentIndex = index
       @view.currentTabChanged(@tabs[index])
-      @_start()
 
   _select: ->
     if @switching
