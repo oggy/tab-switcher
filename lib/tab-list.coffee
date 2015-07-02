@@ -20,7 +20,7 @@ class TabList
       @destroy
 
     @disposable.add @pane.onDidAddItem (item) =>
-      tab = {id: @lastId += 1, item: item.item}
+      tab = {id: @lastId += 1, pane: @pane, item: item.item}
       @tabs.push(tab)
       @view.tabAdded(tab)
 
@@ -48,7 +48,7 @@ class TabList
     @view.updateAnimationDelay(delay)
 
   _buildTabs: (items, data, version) ->
-    tabs = items.map (item) => {id: @lastId += 1, item: item}
+    tabs = items.map (item) => {id: @lastId += 1, pane: @pane, item: item}
     if data
       titleOrder = data.tabs.map (item) -> item.title
       newTabs = 0
@@ -102,7 +102,7 @@ class TabList
   closeCurrent: ->
     tab = @tabs[@currentIndex]
     return if tab is undefined
-    @pane.removeItem(tab.item)
+    tab.pane.removeItem(tab.item)
 
   _moveItemToFront: (item) ->
     index = @_findItemIndex(item)
@@ -150,8 +150,9 @@ class TabList
       @switching = false
       unless @currentIndex is null
         if 0 <= @currentIndex < @tabs.length
-          @pane.activateItem(@tabs[@currentIndex].item)
-          @pane.activate()
+          tab = @tabs[@currentIndex]
+          tab.pane.activateItem(tab.item)
+          tab.pane.activate()
         @currentIndex = null
         @view.currentTabChanged(null)
       @view.hide()
