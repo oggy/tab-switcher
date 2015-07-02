@@ -88,12 +88,10 @@ class TabListView
 
     invokeSelect = (event) =>
       if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
-        console.log 'selecting'
         @tabSwitcher.select()
         unbind()
 
     invokeCancel = (event) =>
-      console.log 'canceling'
       @tabSwitcher.cancel()
       unbind()
 
