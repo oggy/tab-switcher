@@ -27,9 +27,6 @@ class TabList
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
 
-    @disposable.add @pane.onDidDestroy =>
-      @tabs = []
-
   _buildTabs: (items, data, version) ->
     tabs = items.map (item) => {id: @lastId += 1, item: item}
     if data
@@ -47,6 +44,7 @@ class TabList
 
   destroy: ->
     @pane = null
+    @tabs = []
     @disposable.dispose()
     @view.destroy()
 
