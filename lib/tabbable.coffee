@@ -42,7 +42,7 @@ class Tabbable
     disposable = new CompositeDisposable
     @getPanes().forEach (pane) ->
       disposable.add pane.onDidRemoveItem (item) ->
-        callback(pane, item)
+        callback(pane, item.item)
     disposable
 
   observeActiveItem: (callback) ->
