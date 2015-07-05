@@ -1,5 +1,9 @@
 ## LATEST
 
+* Setting to include tabs in all panes.
+
+## LATEST
+
 * There is setting to add a delay before tab list appears. [Eldar Gabdullin]
 * MRU tab is now focused after closing a tab.
 * Tab list now scrolls when moving up/down via keyboard.
