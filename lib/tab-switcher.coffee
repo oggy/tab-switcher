@@ -5,35 +5,45 @@ TabSwitcher =
   tabLists: {}
 
   currentList: ->
-    pane = atom.workspace.getActivePane()
-    return null if not pane
+    if atom.config.get('tab-switcher.global')
+      @tabLists[0] ?= new TabList(atom.workspace)
+    else
+      pane = atom.workspace.getActivePane()
+      return null if not pane
 
-    tabList = @tabLists[pane.id]
-    if tabList is undefined
-      @tabLists[pane.id] = tabList = new TabList(pane)
-      pane.onDidDestroy =>
-        delete @tabLists[pane.id]
+      tabList = @tabLists[pane.id]
+      if tabList is undefined
+        @tabLists[pane.id] = tabList = new TabList(pane)
+        pane.onDidDestroy =>
+          delete @tabLists[pane.id]
 
-    return tabList
+      tabList
 
   destroyLists: ->
     for paneId, tabList of @tabLists
       tabList.destroy()
 
   serialize: ->
-    panesState = atom.workspace.getPanes().map (pane) =>
-      tabList = @tabLists[pane.id]
-      tabList.serialize()
-      if tabList then tabList.serialize() else null
-    {version: 1, panes: panesState}
+    state = {version: 1}
+    if atom.config.get('tab-switcher.global')
+      state.workspace = @tabLists[0]?.serialize?()
+    else
+      state.panes = atom.workspace.getPanes().map (pane) =>
+        tabList = @tabLists[pane.id]
+        tabList.serialize()
+        if tabList then tabList.serialize() else null
 
   deserialize: (state) ->
     return if state.version != 1
-    panes = atom.workspace.getPanes()
-    for paneState, i in state.panes
-      pane = panes[i]
-      continue if paneState is null or pane is undefined
-      @tabLists[pane.id] = new TabList(pane, paneState, state.version)
+    if atom.config.get('tab-switcher.global')
+      if state.workspace
+        @tabLists[0] = new TabList(atom.workspace, state.workspace, state.version)
+    else
+      panes = atom.workspace.getPanes()
+      for paneState, i in state.panes
+        pane = panes[i]
+        continue if paneState is null or pane is undefined
+        @tabLists[pane.id] = new TabList(pane, paneState, state.version)
 
   updateAnimationDelay: (delay) ->
     for id, tabList of @tabLists
@@ -46,6 +56,10 @@ module.exports =
       default: 0,
       title: 'Pause before displaying tab switcher, in seconds (default: 0)'
       description: 'Increasing this can reduce flicker when switching quickly.'
+    global:
+      type: 'boolean'
+      default: false
+      title: 'Include tabs from all panes'
 
   activate: (state) ->
     @disposable = new CompositeDisposable

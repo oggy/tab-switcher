@@ -1,37 +1,38 @@
 {CompositeDisposable} = require 'atom'
 TabListView = require './tab-list-view'
+Tabbable = require './tabbable'
 
 module.exports =
 class TabList
-  constructor: (pane, data, version) ->
-    @pane = pane
+  constructor: (paneOrWorkspace, data, version) ->
+    @tabbable = new Tabbable(paneOrWorkspace)
     @lastId = 0
-    @tabs = @_buildTabs(pane.getItems(), data, version)
+    @tabs = @_buildTabs(@tabbable.getItems(), data, version)
     @currentIndex = null
     @view = new TabListView(@)
     @disposable = new CompositeDisposable
 
-    @disposable.add @pane.onDidDestroy =>
+    @disposable.add @tabbable.onDidDestroy =>
       @destroy
 
-    @disposable.add @pane.onDidAddItem (item) =>
-      tab = {id: @lastId += 1, pane: @pane, item: item.item}
+    @disposable.add @tabbable.onDidAddItem (pane, item) =>
+      tab = {id: @lastId += 1, pane: pane, item: item}
       @tabs.push(tab)
       @view.tabAdded(tab)
 
-    @disposable.add @pane.onDidRemoveItem (item) =>
-      index = @_findItemIndex(item.item)
+    @disposable.add @tabbable.onDidRemoveItem (pane, item) =>
+      index = @_findItemIndex(pane, item)
       return if index is null
       @_removeTabAtIndex(index)
 
-    @disposable.add @pane.observeActiveItem (item) =>
-      @_moveItemToFront(item)
+    @disposable.add @tabbable.observeActiveItem (pane, item) =>
+      @_moveItemToFront(pane, item)
 
   updateAnimationDelay: (delay) ->
     @view.updateAnimationDelay(delay)
 
   _buildTabs: (items, data, version) ->
-    tabs = items.map (item) => {id: @lastId += 1, pane: @pane, item: item}
+    tabs = items.map ([pane, item]) => {id: @lastId += 1, pane: pane, item: item}
     if data
       titleOrder = data.tabs.map (item) -> item.title
       newTabs = 0
@@ -46,7 +47,7 @@ class TabList
     tabs
 
   destroy: ->
-    @pane = null
+    @tabbable = null
     @tabs = []
     @disposable.dispose()
     @view.destroy()
@@ -85,18 +86,18 @@ class TabList
   closeCurrent: ->
     tab = @tabs[@currentIndex]
     return if tab is undefined
-    tab.pane.removeItem(tab.item)
+    @tabbable.removeItem(tab.pane, tab.item)
 
-  _moveItemToFront: (item) ->
-    index = @_findItemIndex(item)
-    unless index == -1
+  _moveItemToFront: (pane, item) ->
+    index = @_findItemIndex(pane, item)
+    if index
       tabs = @tabs.splice(index, 1)
       @tabs.unshift(tabs[0])
       @view.tabsReordered()
 
-  _findItemIndex: (item) ->
+  _findItemIndex: (pane, item) ->
     for tab, index in @tabs
-      if tab.item == item
+      if tab.pane is pane and tab.item is item
         return index
     return null
 
@@ -134,8 +135,7 @@ class TabList
       unless @currentIndex is null
         if 0 <= @currentIndex < @tabs.length
           tab = @tabs[@currentIndex]
-          tab.pane.activateItem(tab.item)
-          tab.pane.activate()
+          @tabbable.activateItem(tab.pane, tab.item)
         @currentIndex = null
         @view.currentTabChanged(null)
       @view.hide()
