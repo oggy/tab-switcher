@@ -27,6 +27,9 @@ class TabList
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
 
+  updateAnimationDelay: (delay) ->
+    @view.updateAnimationDelay(delay)
+
   _buildTabs: (items, data, version) ->
     tabs = items.map (item) => {id: @lastId += 1, item: item}
     if data
