@@ -42,7 +42,11 @@ class TabListView
 
     @_buildList()
 
-    @modalPanel = atom.workspace.addModalPanel(item: vert, visible: false, className: 'tab-switcher')
+    @modalPanel = atom.workspace.addModalPanel
+      item: vert
+      visible: false
+      className: 'tab-switcher'
+    @panel = vert.parentNode
 
     @disposable.add @ol.addEventListener 'mouseover', (event) =>
       if (li = event.target.closest('li'))
@@ -53,6 +57,13 @@ class TabListView
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.select(id)
+
+  updateAnimationDelay: (delay) ->
+    console.log 'updating animation delay', delay
+    if delay == 0
+      @panel.style.transitionDelay = ''
+    else
+      @panel.style.transitionDelay = "#{delay}s"
 
   tabAdded: (tab) ->
     @items[tab.id] = @_makeItem(tab)
@@ -84,7 +95,7 @@ class TabListView
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
     @ol.focus()
-    setTimeout => @modalPanel.getItem().parentNode.classList.add('is-visible')
+    setTimeout => @panel.classList.add('is-visible')
 
     invokeSelect = (event) =>
       if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
@@ -105,7 +116,7 @@ class TabListView
       @ol.removeEventListener 'blur', invokeCancel
 
   hide: ->
-    @modalPanel.getItem().parentNode.classList.remove('is-visible')
+    @panel.classList.remove('is-visible')
     @modalPanel.hide()
 
   _makeItem: (tab) ->

@@ -1,3 +1,7 @@
+## LATEST
+
+* Setting to add delay before tab list appears. [Eldar Gabdullin]
+
 ## 1.2.1 (2015-07-01)
 
 * Fix tab list appearing when a tab is closed.
