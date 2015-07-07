@@ -32,6 +32,7 @@ TabSwitcher =
         tabList = @tabLists[pane.id]
         tabList.serialize()
         if tabList then tabList.serialize() else null
+    state
 
   deserialize: (state) ->
     return if state.version != 1
