@@ -43,6 +43,10 @@ class Tabbable
     @getPanes().forEach (pane) ->
       disposable.add pane.onDidRemoveItem (item) ->
         callback(pane, item.item)
+
+      disposable.add pane.onDidDestroy ->
+        pane.getItems().forEach (item) ->
+          callback(pane, item)
     disposable
 
   observeActiveItem: (callback) ->
