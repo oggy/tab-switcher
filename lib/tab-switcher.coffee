@@ -46,21 +46,27 @@ TabSwitcher =
         continue if paneState is null or pane is undefined
         @tabLists[pane.id] = new TabList(pane, paneState, state.version)
 
-  updateAnimationDelay: (delay) ->
+  settingsUpdated: ->
+    settings = atom.config.get('tab-switcher')
     for id, tabList of @tabLists
-      tabList.updateAnimationDelay(delay)
+      tabList.settingsUpdated(settings)
 
 module.exports =
   config:
     fadeInDelay:
-      type: 'number',
-      default: 0,
       title: 'Pause before displaying tab switcher, in seconds (default: 0)'
       description: 'Increasing this can reduce flicker when switching quickly.'
+      type: 'number'
+      default: 0
     global:
+      title: 'Include tabs from all panes'
       type: 'boolean'
       default: false
-      title: 'Include tabs from all panes'
+    tabless:
+      title: 'Tabless mode'
+      description: 'Hide tabs, move tabs to current pane when needed'
+      type: 'boolean'
+      default: false
 
   activate: (state) ->
     @disposable = new CompositeDisposable
@@ -74,8 +80,16 @@ module.exports =
     if state?.version
       TabSwitcher.deserialize(state)
 
-    @disposable.add atom.config.observe 'tab-switcher.fadeInDelay', (value) ->
-      TabSwitcher.updateAnimationDelay(value)
+    @disposable.add atom.config.onDidChange 'tab-switcher.fadeInDelay', ->
+      TabSwitcher.settingsUpdated()
+
+    @disposable.add atom.config.onDidChange 'tab-switcher.global', ->
+      TabSwitcher.settingsUpdated()
+
+    @disposable.add atom.config.onDidChange 'tab-switcher.tabless', ->
+      TabSwitcher.settingsUpdated()
+
+    TabSwitcher.settingsUpdated()
 
   deactivate: ->
     @disposable.dispose()

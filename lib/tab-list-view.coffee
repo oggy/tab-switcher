@@ -58,8 +58,8 @@ class TabListView
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.select(id)
 
-  updateAnimationDelay: (delay) ->
-    console.log 'updating animation delay', delay
+  settingsUpdated: (settings) ->
+    delay = settings.fadeInDelay
     if delay == 0
       @panel.style.transitionDelay = ''
     else

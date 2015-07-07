@@ -11,6 +11,8 @@ class TabList
     @currentIndex = null
     @view = new TabListView(@)
     @disposable = new CompositeDisposable
+    @global = false
+    @tabless = false
 
     @disposable.add @tabbable.onDidDestroy =>
       @destroy
@@ -28,8 +30,10 @@ class TabList
     @disposable.add @tabbable.observeActiveItem (pane, item) =>
       @_moveItemToFront(pane, item)
 
-  updateAnimationDelay: (delay) ->
-    @view.updateAnimationDelay(delay)
+  settingsUpdated: (settings) ->
+    @view.settingsUpdated(settings)
+    @global = settings.global or settings.tabless
+    @tabless = settings.tabless
 
   _buildTabs: (items, data, version) ->
     tabs = items.map ([pane, item]) => {id: @lastId += 1, pane: pane, item: item}
@@ -114,7 +118,7 @@ class TabList
     @view.tabRemoved(removed[0])
 
     if newCurrentIndex isnt null
-        @_setCurrentIndex(newCurrentIndex)
+      @_setCurrentIndex(newCurrentIndex)
 
   _start: (item) ->
     if not @switching
@@ -135,7 +139,13 @@ class TabList
       unless @currentIndex is null
         if 0 <= @currentIndex < @tabs.length
           tab = @tabs[@currentIndex]
-          @tabbable.activateItem(tab.pane, tab.item)
+          activePane = atom.workspace.getActivePane()
+          if @tabless and not (tab.pane.getActiveItem() is tab.item)
+            numItems = activePane.getItems().length
+            tab.pane.moveItemToPane(tab.item, activePane, numItems)
+            activePane.activateItem(tab.item)
+          else
+            @tabbable.activateItem(tab.pane, tab.item)
         @currentIndex = null
         @view.currentTabChanged(null)
       @view.hide()
