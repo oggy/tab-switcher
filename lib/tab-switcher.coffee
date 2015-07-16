@@ -5,9 +5,7 @@ TabSwitcher =
   tabLists: {}
 
   currentList: ->
-    if atom.config.get('tab-switcher.global')
-      @tabLists[0] ?= new TabList(atom.workspace)
-    else
+    if atom.config.get('tab-switcher.mode') == 'local'
       pane = atom.workspace.getActivePane()
       return null if not pane
 
@@ -18,6 +16,8 @@ TabSwitcher =
           delete @tabLists[pane.id]
 
       tabList
+    else
+      @tabLists[0] ?= new TabList(atom.workspace)
 
   destroyLists: ->
     for paneId, tabList of @tabLists
@@ -25,26 +25,26 @@ TabSwitcher =
 
   serialize: ->
     state = {version: 1}
-    if atom.config.get('tab-switcher.global')
-      state.workspace = @tabLists[0]?.serialize?()
-    else
+    if atom.config.get('tab-switcher.mode') == 'local'
       state.panes = atom.workspace.getPanes().map (pane) =>
         tabList = @tabLists[pane.id]
         tabList.serialize()
         if tabList then tabList.serialize() else null
+    else
+      state.workspace = @tabLists[0]?.serialize?()
     state
 
   deserialize: (state) ->
     return if state.version != 1
-    if atom.config.get('tab-switcher.global')
-      if state.workspace
-        @tabLists[0] = new TabList(atom.workspace, state.workspace, state.version)
-    else
+    if atom.config.get('tab-switcher.mode') == 'local'
       panes = atom.workspace.getPanes()
       for paneState, i in state.panes
         pane = panes[i]
         continue if paneState is null or pane is undefined
         @tabLists[pane.id] = new TabList(pane, paneState, state.version)
+    else
+      if state.workspace
+        @tabLists[0] = new TabList(atom.workspace, state.workspace, state.version)
 
   settingsUpdated: ->
     settings = atom.config.get('tab-switcher')
@@ -58,15 +58,11 @@ module.exports =
       description: 'Increasing this can reduce flicker when switching quickly.'
       type: 'number'
       default: 0
-    global:
-      title: 'Include tabs from all panes'
-      type: 'boolean'
-      default: false
-    tabless:
-      title: 'Tabless mode'
-      description: 'Hide tabs, move tabs to current pane when needed'
-      type: 'boolean'
-      default: false
+    mode:
+      title: 'Mode'
+      type: 'string'
+      default: 'local'
+      enum: ['local', 'global', 'tabless']
 
   activate: (state) ->
     @disposable = new CompositeDisposable
@@ -83,10 +79,7 @@ module.exports =
     @disposable.add atom.config.onDidChange 'tab-switcher.fadeInDelay', ->
       TabSwitcher.settingsUpdated()
 
-    @disposable.add atom.config.onDidChange 'tab-switcher.global', ->
-      TabSwitcher.settingsUpdated()
-
-    @disposable.add atom.config.onDidChange 'tab-switcher.tabless', ->
+    @disposable.add atom.config.onDidChange 'tab-switcher.mode', ->
       TabSwitcher.settingsUpdated()
 
     TabSwitcher.settingsUpdated()
