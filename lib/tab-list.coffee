@@ -16,8 +16,7 @@ class TabList
     @currentIndex = null
     @view = new TabListView(@)
     @disposable = new CompositeDisposable
-    @global = false
-    @tabless = false
+    @mode = 'local'
 
     @disposable.add @tabbable.onDidDestroy =>
       @destroy
@@ -29,12 +28,14 @@ class TabList
 
     @disposable.add @tabbable.onWillRemoveItem (pane, item) =>
       if pane.getActiveItem() is item
-        if @tabless
-          tab = find @tabs, (tab) -> tab.pane.getActiveItem() isnt tab.item
-        else if @global
-          tab = find @tabs, (tab) -> tab.item isnt item and tab.pane is pane
-        else
+        if @mode == 'local'
           tab = find @tabs, (tab) -> tab.item isnt item
+        else if @mode == 'global'
+          tab = find @tabs, (tab) -> tab.item isnt item and tab.pane is pane
+        else if @mode == 'tabless'
+          tab = find @tabs, (tab) -> tab.pane.getActiveItem() isnt tab.item
+        else
+          console.error "invalid mode: #{@mode}"
 
         if tab
           tab.pane.activateItem(tab.item)
@@ -48,9 +49,8 @@ class TabList
       @_moveItemToFront(pane, item)
 
   settingsUpdated: (settings) ->
+    @mode = settings.mode
     @view.settingsUpdated(settings)
-    @global = settings.global or settings.tabless
-    @tabless = settings.tabless
 
   _buildTabs: (items, data, version) ->
     tabs = items.map ([pane, item]) => {id: @lastId += 1, pane: pane, item: item}
@@ -157,7 +157,7 @@ class TabList
         if 0 <= @currentIndex < @tabs.length
           tab = @tabs[@currentIndex]
           activePane = atom.workspace.getActivePane()
-          if @tabless and not (tab.pane.getActiveItem() is tab.item)
+          if @mode == 'tabless' and not (tab.pane.getActiveItem() is tab.item)
             numItems = activePane.getItems().length
             tab.pane.moveItemToPane(tab.item, activePane, numItems)
             activePane.activateItem(tab.item)

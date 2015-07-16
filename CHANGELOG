@@ -1,6 +1,11 @@
 ## LATEST
 
-* Setting to include tabs in all panes.
+* New mode setting, which can be one of:
+  - Local: only shows tabs in the current pane (default, as before)
+  - Global: includes tabs in all panes
+  - Tabless: global, plus moves selected tab to the current pane if not visible
+
+  Tabless mode is designed to be used when you hide the tab bar completely.
 
 ## LATEST
 
