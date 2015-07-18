@@ -25,11 +25,12 @@ class Tabbable
       new CompositeDisposable
 
   onDidAddItem: (callback) ->
-    disposable = new CompositeDisposable
-    @getPanes().forEach (pane) ->
-      disposable.add pane.onDidAddItem (item) =>
-        callback(pane, item.item)
-    disposable
+    if @workspace
+      @workspace.onDidAddPaneItem (event) =>
+        callback(event.pane, event.item)
+    else
+      @pane.onDidAddItem (event) =>
+        callback(pane, event.item)
 
   onWillRemoveItem: (callback) ->
     disposable = new CompositeDisposable
