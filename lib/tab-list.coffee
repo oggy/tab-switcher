@@ -138,7 +138,7 @@ class TabList
         if 0 <= @currentIndex < @tabs.length
           tab = @tabs[@currentIndex]
           activePane = atom.workspace.getActivePane()
-          if @mode == 'tabless' and not (tab.pane.getActiveItem() is tab.item)
+          if @_shouldMoveTabToActivePane(tab, activePane)
             numItems = activePane.getItems().length
             tab.pane.moveItemToPane(tab.item, activePane, numItems)
             activePane.activateItem(tab.item)
@@ -147,6 +147,11 @@ class TabList
         @currentIndex = null
         @view.currentTabChanged(null)
       @view.hide()
+
+  _shouldMoveTabToActivePane: (tab, activePane) ->
+    @mode == 'tabless' and
+      not (tab.pane is activePane) and
+      not (tab.pane.getActiveItem() is tab.item)
 
   cancel: ->
     if @switching
