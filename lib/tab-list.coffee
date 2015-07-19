@@ -25,7 +25,8 @@ class TabList
     @disposable.add @tabbable.onDidRemoveItem (pane, item) =>
       return if @movingItemBetweenPanes
       index = @_findItemIndex(pane, item)
-      return if index is null
+      if index is null
+        return console.warn "item to remove not found"
       @_removeTabAtIndex(index)
 
     @disposable.add @tabbable.observeActiveItem (pane, item) =>
@@ -79,17 +80,20 @@ class TabList
 
   setCurrentId: (id) ->
     index = @tabs.map((tab) -> tab.id).indexOf(id)
-    return if index == -1
+    if index == -1
+      return console.warn "setCurrentId: can't find tab id", id
     @_setCurrentIndex(index)
 
   saveCurrent: ->
     tab = @tabs[@currentIndex]
-    return if tab is undefined
+    if tab is undefined
+      return console.warn "saveCurrent: invalid index selected", @currentIndex
     tab.item.save?()
 
   closeCurrent: ->
     tab = @tabs[@currentIndex]
-    return if tab is undefined
+    if tab is undefined
+      return console.warn "closeCurrent: invalid index selected", @currentIndex
     @tabbable.removeItem(tab.pane, tab.item)
 
   _moveItemToFront: (pane, item) ->
