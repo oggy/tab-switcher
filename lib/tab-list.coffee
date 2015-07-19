@@ -22,6 +22,7 @@ class TabList
       @destroy
 
     @disposable.add @tabbable.onDidAddItem (pane, item) =>
+      return if @movingItemBetweenPanes
       tab = {id: @lastId += 1, pane: pane, item: item}
       @tabs.push(tab)
       @view.tabAdded(tab)
@@ -41,6 +42,7 @@ class TabList
           tab.pane.activateItem(tab.item)
 
     @disposable.add @tabbable.onDidRemoveItem (pane, item) =>
+      return if @movingItemBetweenPanes
       index = @_findItemIndex(pane, item)
       return if index is null
       @_removeTabAtIndex(index)
@@ -159,7 +161,11 @@ class TabList
           activePane = atom.workspace.getActivePane()
           if @_shouldMoveTabToActivePane(tab, activePane)
             numItems = activePane.getItems().length
-            tab.pane.moveItemToPane(tab.item, activePane, numItems)
+            @movingItemBetweenPanes = true
+            try
+              tab.pane.moveItemToPane(tab.item, activePane, numItems)
+            finally
+              @movingItemBetweenPanes = false
             activePane.activateItem(tab.item)
           else
             @tabbable.activateItem(tab.pane, tab.item)
