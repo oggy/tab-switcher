@@ -145,6 +145,7 @@ class TabList
             @movingItemBetweenPanes = true
             try
               tab.pane.moveItemToPane(tab.item, activePane, numItems)
+              tab.pane = activePane
             finally
               @movingItemBetweenPanes = false
             activePane.activateItem(tab.item)
