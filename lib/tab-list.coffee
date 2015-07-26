@@ -2,6 +2,11 @@
 TabListView = require './tab-list-view'
 Tabbable = require './tabbable'
 
+find = (list, predicate) ->
+  for element in list
+    return element if predicate(element)
+  null
+
 module.exports =
 class TabList
   constructor: (paneOrWorkspace, data, version) ->
@@ -28,6 +33,20 @@ class TabList
       if index is null
         return console.warn "item to remove not found"
       @_removeTabAtIndex(index)
+
+    @disposable.add @tabbable.onWillRemoveItem (pane, item) =>
+      if pane.getActiveItem() is item
+        if @mode == 'local'
+          tab = find @tabs, (tab) -> tab.item isnt item
+        else if @mode == 'global'
+          tab = find @tabs, (tab) -> tab.item isnt item and tab.pane is pane
+        else if @mode == 'tabless'
+          tab = find @tabs, (tab) -> tab.pane.getActiveItem() isnt tab.item
+        else
+          console.error "invalid mode: #{@mode}"
+
+        if tab
+          tab.pane.activateItem(tab.item)
 
     @disposable.add @tabbable.observeActiveItem (pane, item) =>
       @_moveItemToFront(pane, item)

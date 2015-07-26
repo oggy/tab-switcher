@@ -32,6 +32,20 @@ class Tabbable
       @pane.onDidAddItem (event) =>
         callback(pane, event.item)
 
+  onWillRemoveItem: (callback) ->
+    if @workspace
+      disposable = new CompositeDisposable
+      disposable.add @workspace.observePanes (pane) ->
+        subscription = pane.onWillRemoveItem (event) ->
+          callback(pane, event.item)
+
+        disposable.add subscription
+        disposable.add pane.onDidDestroy (event) -> disposable.remove(subscription)
+      disposable
+    else
+      @pane.onWillRemoveItem (event) =>
+        callback(@pane, event.item)
+
   onDidRemoveItem: (callback) ->
     if @workspace
       @workspace.onDidDestroyPaneItem (event) =>
