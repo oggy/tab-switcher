@@ -38,7 +38,7 @@ TabSwitcher =
     return if state.version != 1
     if atom.config.get('tab-switcher.mode') == 'local'
       panes = atom.workspace.getPanes()
-      for paneState, i in state.panes
+      for paneState, i in (state.panes ? [])
         pane = panes[i]
         continue if paneState is null or pane is undefined
         @tabLists[pane.id] = new TabList(pane, paneState, state.version)
