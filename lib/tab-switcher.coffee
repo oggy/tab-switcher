@@ -40,7 +40,7 @@ TabSwitcher =
         @tabLists[0] = new TabList(atom.workspace, state.workspace, state.version)
     else
       panes = atom.workspace.getPanes()
-      for paneState, i in state.panes
+      for paneState, i in (state.panes ? [])
         pane = panes[i]
         continue if paneState is null or pane is undefined
         @tabLists[pane.id] = new TabList(pane, paneState, state.version)
