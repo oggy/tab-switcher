@@ -1,11 +1,17 @@
 {CompositeDisposable} = require 'atom'
 TabList = require './tab-list'
+TabListView = require './tab-list-view'
 
 TabSwitcher =
-  tabLists: {}
+  reset: ->
+    @settings =
+      mode: 'local'
+      fadeInDelay: 0
+
+    @tabLists = {}
 
   currentList: ->
-    if atom.config.get('tab-switcher.mode') == 'local'
+    if @settings.mode == 'local'
       pane = atom.workspace.getActivePane()
       return null if not pane
 
@@ -25,10 +31,9 @@ TabSwitcher =
 
   serialize: ->
     state = {version: 1}
-    if atom.config.get('tab-switcher.mode') == 'local'
+    if @settings.mode == 'local'
       state.panes = atom.workspace.getPanes().map (pane) =>
         tabList = @tabLists[pane.id]
-        tabList.serialize()
         if tabList then tabList.serialize() else null
     else
       state.workspace = @tabLists[0]?.serialize?()
@@ -36,6 +41,7 @@ TabSwitcher =
 
   deserialize: (state) ->
     return if state.version != 1
+    # Note: deserialize is called before activate, so @settings is undefined.
     if atom.config.get('tab-switcher.mode') == 'local'
       panes = atom.workspace.getPanes()
       for paneState, i in (state.panes ? [])
@@ -46,12 +52,18 @@ TabSwitcher =
       if state.workspace
         @tabLists[0] = new TabList(atom.workspace, state.workspace, state.version)
 
-  settingsUpdated: ->
-    settings = atom.config.get('tab-switcher')
+  settingsUpdated: (settings) ->
+    @settings = settings
     for id, tabList of @tabLists
       tabList.settingsUpdated(settings)
 
+TabSwitcher.reset()
+
 module.exports =
+  TabSwitcher: TabSwitcher
+  TabList: TabList
+  TabListView: TabListView
+
   config:
     fadeInDelay:
       title: 'Pause before displaying tab switcher, in seconds (default: 0)'
@@ -77,12 +89,12 @@ module.exports =
       TabSwitcher.deserialize(state)
 
     @disposable.add atom.config.onDidChange 'tab-switcher.fadeInDelay', ->
-      TabSwitcher.settingsUpdated()
+      TabSwitcher.settingsUpdated atom.config.get('tab-switcher')
 
     @disposable.add atom.config.onDidChange 'tab-switcher.mode', ->
-      TabSwitcher.settingsUpdated()
+      TabSwitcher.settingsUpdated atom.config.get('tab-switcher')
 
-    TabSwitcher.settingsUpdated()
+    TabSwitcher.settingsUpdated atom.config.get('tab-switcher')
 
   deactivate: ->
     @disposable.dispose()
