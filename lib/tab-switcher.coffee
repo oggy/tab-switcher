@@ -43,8 +43,8 @@ module.exports =
   config:
     fadeInDelay:
       type: 'number',
-      default: 0,
-      title: 'Pause before displaying tab switcher, in seconds (default: 0)'
+      default: 0.1,
+      title: 'Pause before displaying tab switcher, in seconds'
       description: 'Increasing this can reduce flicker when switching quickly.'
 
   activate: (state) ->

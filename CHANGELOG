@@ -1,6 +1,6 @@
 ## LATEST
 
-* There is setting to add a delay before tab list appears. [Eldar Gabdullin]
+* Wait a (configurable) moment before displaying tab list. [Eldar Gabdullin]
 * MRU tab is now focused after closing a tab.
 * Tab list now scrolls when moving up/down via keyboard.
 
