@@ -1,6 +1,11 @@
 {CompositeDisposable} = require 'atom'
 TabListView = require './tab-list-view'
 
+find = (list, predicate) ->
+  for element in list
+    return element if predicate(element)
+  null
+
 module.exports =
 class TabList
   constructor: (pane, data, version) ->
@@ -18,6 +23,12 @@ class TabList
       tab = {id: @lastId += 1, item: item.item}
       @tabs.push(tab)
       @view.tabAdded(tab)
+
+    @disposable.add @pane.onWillRemoveItem (event) =>
+      if @pane.getActiveItem() is event.item
+        tab = find @tabs, (tab) -> tab.item isnt event.item
+        if tab
+          @pane.activateItem(tab.item)
 
     @disposable.add @pane.onDidRemoveItem (item) =>
       index = @_findItemIndex(item.item)
