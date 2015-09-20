@@ -23,7 +23,6 @@ TabSwitcher =
   serialize: ->
     panesState = atom.workspace.getPanes().map (pane) =>
       tabList = @tabLists[pane.id]
-      tabList.serialize()
       if tabList then tabList.serialize() else null
     {version: 1, panes: panesState}
 
