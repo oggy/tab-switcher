@@ -46,6 +46,11 @@ module.exports =
       default: 0.1,
       title: 'Pause before displaying tab switcher, in seconds'
       description: 'Increasing this can reduce flicker when switching quickly.'
+    reSortTabs:
+      type: 'boolean'
+      default: false
+      title: 'Sort editor tabs'
+      description: "Move the editor tabs to match the tab-switcher list"
 
   activate: (state) ->
     @disposable = new CompositeDisposable
