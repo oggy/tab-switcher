@@ -30,7 +30,7 @@ class Tabbable
         callback(event.pane, event.item)
     else
       @pane.onDidAddItem (event) =>
-        callback(pane, event.item)
+        callback(@pane, event.item)
 
   onWillRemoveItem: (callback) ->
     if @workspace
