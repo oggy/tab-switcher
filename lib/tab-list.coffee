@@ -100,7 +100,7 @@ class TabList
 
   _moveItemToFront: (item) ->
     index = @_findItemIndex(item)
-    unless index == -1
+    unless index is null
       tabs = @tabs.splice(index, 1)
       @tabs.unshift(tabs[0])
       @view.tabsReordered()
