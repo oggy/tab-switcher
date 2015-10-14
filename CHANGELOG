@@ -1,3 +1,7 @@
+## LATEST
+
+* Fix error when invoking the switcher with no tabs open.
+
 ## 1.3.1 (2015-09-20)
 
 * Fix potential error when disabling the package.
