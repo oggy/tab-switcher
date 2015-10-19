@@ -73,6 +73,10 @@ class TabListView
     delete @items[tab.id]
     @_buildList()
 
+  tabUpdated: (tab) ->
+    @items[tab.id] = @_makeItem(tab)
+    @_buildList()
+
   tabsReordered: ->
     @_buildList()
 

@@ -1,3 +1,7 @@
+## LATEST
+
+* Update tab list when file is renamed.
+
 ## 1.3.2 (2015-10-14)
 
 * Fix error when invoking the switcher with no tabs open.

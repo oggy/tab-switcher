@@ -38,6 +38,12 @@ class TabList
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
 
+    @disposable.add @pane.observeItems (item) =>
+      return if !item.onDidChangeTitle
+      @disposable.add item.onDidChangeTitle =>
+        tab = find @tabs, (tab) -> tab.item is item
+        @view.tabUpdated(tab)
+
   updateAnimationDelay: (delay) ->
     @view.updateAnimationDelay(delay)
 
