@@ -59,7 +59,6 @@ class TabListView
         tabSwitcher.select(id)
 
   updateAnimationDelay: (delay) ->
-    console.log 'updating animation delay', delay
     if delay == 0
       @panel.style.transitionDelay = ''
     else
