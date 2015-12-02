@@ -128,7 +128,7 @@ class TabListView
     @modalPanel.hide()
 
   _makeItem: (tab) ->
-    tab.isEditor = tab.item.constructor == TextEditor
+    tab.isEditor = tab.item.constructor.name == 'TextEditor'
     tab.modifiedIcon = makeElement('span', {class: 'modified-icon'})
     label = makeElement('span', {class: 'tab-label'}, [document.createTextNode(tab.item.getTitle())])
 
