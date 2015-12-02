@@ -33,6 +33,7 @@ class TabListView
     @disposable = new CompositeDisposable
     @items = {}
     @currentItem = null
+    @lastMouseCoords = [null, null]
 
     for tab in tabSwitcher.tabs
       @items[tab.id] = @_makeItem(tab)
@@ -49,6 +50,8 @@ class TabListView
     @panel = vert.parentNode
 
     @disposable.add @ol.addEventListener 'mouseover', (event) =>
+      # Mouseover may trigger without a mouse move if the list scrolls.
+      return if not @mouseMoved(event)
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.setCurrentId(id)
@@ -57,6 +60,11 @@ class TabListView
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.select(id)
+
+  mouseMoved: (event) ->
+    result = @lastMouseCoords[0] != event.screenX or @lastMouseCoords[1] != event.screenY
+    @lastMouseCoords = [event.screenX, event.screenY]
+    result
 
   updateAnimationDelay: (delay) ->
     if delay == 0
