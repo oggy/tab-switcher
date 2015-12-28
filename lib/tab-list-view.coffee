@@ -1,5 +1,5 @@
 Path = require 'path'
-{CompositeDisposable, TextEditor} = require 'atom'
+{CompositeDisposable} = require 'atom'
 
 makeElement = (name, attributes, children) ->
   element = document.createElement(name)
