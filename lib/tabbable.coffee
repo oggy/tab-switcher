@@ -63,13 +63,18 @@ class Tabbable
           if atom.workspace.getActivePane() is pane
             callback(pane, item)
       @workspace.onDidChangeActivePane (pane) ->
-        callback(pane, pane.getActiveItem())
+        item = pane.getActiveItem()
+        callback(pane, pane.getActiveItem()) if item
+
+      pane = atom.workspace.getActivePane()
     else
       disposable.add @pane.onDidChangeActiveItem (item) =>
-        callback(@pane, item)
+        callback(@pane, item) if item
 
-    activePane = atom.workspace.getActivePane()
-    callback(activePane, activePane.getActiveItem())
+      pane = @pane
+
+    activeItem = pane.getActiveItem()
+    callback(pane, activeItem) if activeItem
     disposable
 
   observeItems: (callback) ->

@@ -1,8 +1,11 @@
 {CompositeDisposable} = require 'atom'
+Tabbable = require './tabbable'
 TabList = require './tab-list'
+TabListView = require './tab-list-view'
 
 TabSwitcher =
-  tabLists: {}
+  reset: ->
+    @tabLists = {}
 
   currentList: ->
     if atom.config.get('tab-switcher.global')
@@ -49,7 +52,14 @@ TabSwitcher =
     for id, tabList of @tabLists
       tabList.updateAnimationDelay(delay)
 
+TabSwitcher.reset()
+
 module.exports =
+  TabSwitcher: TabSwitcher
+  Tabbable: Tabbable
+  TabList: TabList
+  TabListView: TabListView
+
   config:
     fadeInDelay:
       type: 'number',
