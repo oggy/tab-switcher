@@ -18,7 +18,7 @@ class TabList
     @disposable = new CompositeDisposable
 
     @disposable.add @tabbable.onDidDestroy =>
-      @destroy
+      @destroy()
 
     @disposable.add @tabbable.onDidAddItem (pane, item) =>
       tab = {id: @lastId += 1, pane: pane, item: item}
@@ -71,7 +71,8 @@ class TabList
   destroy: ->
     @tabbable = null
     @tabs = []
-    @disposable.dispose()
+    @disposable?.dispose()
+    @disposable = null
     @view.destroy()
 
   serialize: ->

@@ -1,5 +1,5 @@
 Path = require 'path'
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Disposable} = require 'atom'
 
 makeElement = (name, attributes, children) ->
   element = document.createElement(name)
@@ -27,6 +27,10 @@ projectRelativePath = (path) ->
   else
     path
 
+addEventListener = (element, event, handler) ->
+  element.addEventListener(event, handler)
+  new Disposable => element.removeEventListener(event, handler)
+
 class TabListView
   constructor: (tabSwitcher) ->
     @tabSwitcher = tabSwitcher
@@ -49,14 +53,14 @@ class TabListView
       className: 'tab-switcher'
     @panel = vert.parentNode
 
-    @disposable.add @ol.addEventListener 'mouseover', (event) =>
+    @disposable.add addEventListener @ol, 'mouseover', (event) =>
       # Mouseover may trigger without a mouse move if the list scrolls.
       return if not @mouseMoved(event)
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.setCurrentId(id)
 
-    @disposable.add @ol.addEventListener 'click', (event) =>
+    @disposable.add addEventListener @ol, 'click', (event) =>
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.select(id)
@@ -97,7 +101,8 @@ class TabListView
 
   destroy: ->
     @modalPanel.destroy()
-    @disposable.dispose()
+    @disposable?.dispose()
+    @disposable = null
 
   show: ->
     @scrollToCurrentTab()
