@@ -13,7 +13,7 @@ makeElement = (name, attributes, children) ->
 home = if process.platform == 'win32' then process.env.USERPROFILE else process.env.HOME
 
 isUnder = (dir, path) ->
-  Path.relative(path, dir).startsWith('..')
+  not Path.relative(dir, path).startsWith('..')
 
 projectRelativePath = (path) ->
   path = Path.dirname(path)
@@ -23,7 +23,7 @@ projectRelativePath = (path) ->
       relativePath = Path.basename(root) + Path.sep + relativePath
     relativePath
   else if home and isUnder(home, path)
-    '~' + Path.sep + Path.relative(home, path)
+    Path.join('~', Path.relative(home, path))
   else
     path
 
@@ -63,6 +63,7 @@ class TabListView
     @disposable.add addEventListener @ol, 'click', (event) =>
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
+        tabSwitcher.setCurrentId(id)
         tabSwitcher.select(id)
 
   mouseMoved: (event) ->
