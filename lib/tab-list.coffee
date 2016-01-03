@@ -112,7 +112,7 @@ class TabList
     tab = @tabs[@currentIndex]
     if tab is undefined
       return console.warn "closeCurrent: invalid index selected", @currentIndex
-    @tabbable.removeItem(tab.pane, tab.item)
+    @tabbable.removeTab(tab.pane, tab.item)
 
   _moveItemToFront: (pane, item) ->
     index = @_findItemIndex(pane, item)

@@ -1,18 +1,6 @@
-{Tabbable, TabSwitcher} = require '../lib/tab-switcher'
 {View} = require 'atom-space-pen-views'
-
-equalById = (array1, array2) ->
-  if array1 instanceof Array and array2 instanceof Array
-    array1.length == array2.length and
-      [0...array1.length].every (i) -> equalById(array1[i], array2[i])
-  else
-    array1 and array2 and array1?.id == array2?.id
-
-ids = (thing) ->
-  if thing instanceof Array
-    ids(x) for x in thing
-  else
-    thing.id
+{Tabbable, TabSwitcher} = require '../lib/tab-switcher'
+{matchers} = require './helpers'
 
 describe "Tabbable", ->
   class TestItem extends View
@@ -24,6 +12,7 @@ describe "Tabbable", ->
       super
 
   beforeEach ->
+    @addMatchers(matchers)
     waitsForPromise ->
       atom.workspace.open().then (editor) ->
         atom.workspace.getActivePane().destroyItem(editor)
@@ -31,7 +20,6 @@ describe "Tabbable", ->
         atom.views.getView(atom.workspace)
         TabSwitcher.reset()
 
-  beforeEach ->
     @pane1 = atom.workspace.getActivePane()
     @item1 = new TestItem
     @pane1.addItem(@item1)
@@ -41,15 +29,6 @@ describe "Tabbable", ->
     @pane2.addItem(@item2)
 
     @pane1.focus()
-
-    @addMatchers
-      # Comparing models makes things super slow in the failure case. Compare
-      # them by ids instead.
-      toEqualById: (expected) ->
-        expectedIds = ids(expected)
-        actualIds = ids(@actual)
-        @message = -> "Expected #{actualIds.toString()} to match #{expectedIds.toString()}"
-        equalById(@actual, expected)
 
   describe "for a workspace", ->
     beforeEach ->
