@@ -113,16 +113,16 @@ class TabList
       return console.warn "setCurrentId: can't find tab id", id
     @_setCurrentIndex(index)
 
-  saveCurrent: ->
+  save: ->
     tab = @tabs[@currentIndex]
     if tab is undefined
-      return console.warn "saveCurrent: invalid index selected", @currentIndex
+      return console.warn "save: invalid index selected", @currentIndex
     tab.item.save?()
 
-  closeCurrent: ->
+  close: ->
     tab = @tabs[@currentIndex]
     if tab is undefined
-      return console.warn "closeCurrent: invalid index selected", @currentIndex
+      return console.warn "close: invalid index selected", @currentIndex
     @tabbable.removeTab(tab.pane, tab.item)
 
   _moveItemToFront: (pane, item) ->

@@ -133,7 +133,7 @@ describe "TabSwitcher", ->
       @tabList.setCurrentId(maxId + 1)
       expect(@tabList.currentIndex).toBe(null)
 
-  describe "saveCurrent", ->
+  describe "save", ->
     beforeEach ->
       @tabList = makeTabList(2)
       @pane = @tabList.tabbable.pane
@@ -142,7 +142,7 @@ describe "TabSwitcher", ->
 
     it "saves the current item if possible", ->
       @tabList.setCurrentId(2)
-      @tabList.saveCurrent()
+      @tabList.save()
       expect(@spies[1]).toHaveBeenCalled()
 
     it "doesn't save the item if it doesn't have a save method", ->
@@ -151,24 +151,24 @@ describe "TabSwitcher", ->
       expect(@spies[1]).not.toHaveBeenCalled()
 
     it "does nothing if there is no current item", ->
-      @tabList.saveCurrent()
+      @tabList.save()
       expect(@spies[0]).not.toHaveBeenCalled()
       expect(@spies[1]).not.toHaveBeenCalled()
 
-  describe "closeCurrent", ->
+  describe "close", ->
     it "removes the current item from the tabbable", ->
       @tabList = makeTabList(3)
       @items = @tabList.tabbable.pane.getItems()
 
       @tabList.setCurrentId(2)
-      @tabList.closeCurrent()
+      @tabList.close()
 
       items = (tab.item for tab in @tabList.tabs)
       expect(items).toEqualById([@items[0], @items[2]])
 
     it "does nothing if there are no items", ->
       @tabList = makeTabList(0)
-      @tabList.closeCurrent()
+      @tabList.close()
       expect(@tabList.tabs.length).toEqual(0)
 
   describe "select", ->
