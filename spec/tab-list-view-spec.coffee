@@ -81,6 +81,20 @@ describe "TabSwitcherView", ->
       expect(icons[0].getAttribute('data-name')).toEqual('.txt')
       expect(icons[1].getAttribute('data-name')).toEqual('.coffee')
 
+  describe "in global mode", ->
+    beforeEach ->
+      atom.config.set('tab-switcher.global', true)
+      @pane2 = @pane.splitRight()
+      @pane2.addItem(atom.workspace.buildTextEditor())
+      @tabList = new TabList(atom.workspace)
+
+    it "renders tabs from other panes differently", ->
+      panel = @tabList.view.panel
+      otherPaneLI = panel.querySelector('li[data-id="1"]')
+      expect(otherPaneLI.classList.contains('other-pane')).toBe(true)
+      thisPaneLI = panel.querySelector('li[data-id="3"]')
+      expect(thisPaneLI.classList.contains('other-pane')).toBe(false)
+
   describe "when the tab list is activated", ->
     beforeEach ->
       expect(@panel.getModel().isVisible()).toBe(false)

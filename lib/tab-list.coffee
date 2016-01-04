@@ -50,6 +50,10 @@ class TabList
         tab = find @tabs, (tab) -> tab.item is item
         @view.tabUpdated(tab)
 
+    if @tabbable.workspace
+      @disposable.add atom.workspace.observeActivePane (pane) =>
+        @view.activePaneChanged(pane)
+
   updateAnimationDelay: (delay) ->
     @view.updateAnimationDelay(delay)
 

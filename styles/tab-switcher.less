@@ -51,12 +51,16 @@ ol.tab-switcher-tab-list {
 
   li {
     display: flex;
+    color: white;
 
     &.current {
       background: linear-gradient(to bottom, #105db8, #3380db);
       border-top: solid 1px white;
       border-bottom: solid 1px white;
-      color: white;
+    }
+
+    &.other-pane {
+      color: #ddddff;
     }
 
     &:not(.current) {

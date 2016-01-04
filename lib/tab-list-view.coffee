@@ -92,6 +92,14 @@ class TabListView
   tabsReordered: ->
     @_buildList()
 
+  activePaneChanged: (pane) ->
+    if @tabSwitcher.tabbable.workspace
+      for tab in @tabSwitcher.tabs
+        item = @items[tab.id]
+        continue if not item
+        action = if tab.pane is pane then 'remove' else 'add'
+        item.classList[action]('other-pane')
+
   currentTabChanged: (tab) ->
     if @currentItem
       @currentItem.classList.remove('current')
