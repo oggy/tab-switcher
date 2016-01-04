@@ -54,6 +54,15 @@ class Tabbable
       @pane.onDidRemoveItem (event) =>
         callback(@pane, event.item)
 
+  onDidMoveItem: (callback) ->
+    disposable = new CompositeDisposable
+    if @workspace
+      disposable.add atom.workspace.observePanes (pane) ->
+        disposable.add pane.onDidAddItem (event) ->
+          if event.moved
+            callback(pane, event.item)
+    disposable
+
   observeActiveItem: (callback) ->
     disposable = new CompositeDisposable
 

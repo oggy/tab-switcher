@@ -93,7 +93,7 @@ class TabListView
     @_buildList()
 
   activePaneChanged: (pane) ->
-    if @tabSwitcher.tabbable.workspace
+    if @tabSwitcher.isGlobal()
       for tab in @tabSwitcher.tabs
         item = @items[tab.id]
         continue if not item

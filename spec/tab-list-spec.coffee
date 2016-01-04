@@ -223,6 +223,56 @@ describe "TabSwitcher", ->
         expect(atom.workspace.getActivePane()).toEqualById(@pane1)
         expect(@pane1.getActiveItem()).toEqualById(@item1)
 
+  describe "pull", ->
+    describe "for a global tab list", ->
+      beforeEach ->
+        atom.config.set('tab-switcher.global', true)
+        @pane1 = atom.workspace.getActivePane()
+        @item1 = @pane1.getItems()[0]
+        @pane2 = @pane1.splitRight()
+        @item2 = atom.workspace.buildTextEditor()
+        @pane2.addItem(@item2)
+        @tabList = new TabList(atom.workspace)
+
+      it "pulls the current item into the active pane and activates it", ->
+        expect(@pane1.getItems().length).toBe(1)
+        expect(@pane2.getItems().length).toBe(1)
+        expect(atom.workspace.getActivePaneItem()).toEqualById(@item2)
+
+        @tabList.next()
+        @tabList.pull()
+
+        expect(atom.workspace.getActivePaneItem()).toEqualById(@item1)
+        expect(atom.workspace.getActivePane()).toEqualById(@pane2)
+        expect(@pane1.getItems().length).toBe(0)
+        expect(@pane2.getItems().length).toBe(2)
+
+      it "updates the tab's panes in the tab list", ->
+        @tabList.next()
+        @tabList.pull()
+        expect(tab.pane for tab in @tabList.tabs).toEqualById([@pane2, @pane2])
+
+      it "just activates the item if it's in the active pane", ->
+        item3 = atom.workspace.buildTextEditor()
+        @pane2.addItem(item3)
+        @tabList.next()
+        @tabList.setCurrentId(3)
+        @tabList.pull()
+        expect(atom.workspace.getActivePaneItem()).toEqualById(item3)
+        expect(atom.workspace.getActivePane()).toEqualById(@pane2)
+
+    describe "for a non-global tab list", ->
+      beforeEach ->
+        @tabList = makeTabList(2)
+        @pane = @tabList.tabbable.pane
+        @items = @pane.getItems()
+
+      it "just activates the item", ->
+        expect(@pane.getActiveItem()).toEqualById(@items[0])
+        @tabList.next()
+        @tabList.pull()
+        expect(@pane.getActiveItem()).toEqualById(@items[1])
+
   describe "cancel", ->
     beforeEach ->
       @tabList = makeTabList(2)

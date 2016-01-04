@@ -106,6 +106,25 @@ describe "Tabbable", ->
         removeItem(newPane, newItem)
         expect(events).toEqualById([[newPane, newItem]])
 
+    describe "onDidMoveItem", ->
+      it "fires when an item is moved from one pane to another", ->
+        events = []
+        @tabbable.onDidMoveItem (pane, item) -> events.push([pane, item])
+        @pane1.moveItemToPane(@item1, @pane2, 0)
+        expect(events).toEqualById([[@pane2, @item1]])
+
+      it "does not fire when an item is added to the workspace", ->
+        events = []
+        @tabbable.onDidMoveItem (pane, item) -> events.push([pane, item])
+        @pane1.addItem(new TestItem)
+        expect(events).toEqualById([])
+
+      it "does not fire when an item is removed to the workspace", ->
+        events = []
+        @tabbable.onDidMoveItem (pane, item) -> events.push([pane, item])
+        @pane1.removeItem(@item1)
+        expect(events).toEqualById([])
+
     describe "observeActiveItem", ->
       it "fires for the current active item", ->
         events = []
@@ -264,6 +283,25 @@ describe "Tabbable", ->
         @pane1.addItem(newItem)
         @pane1.removeItem(newItem)
         expect(events).toEqualById([[@pane1, newItem]])
+
+    describe "onDidMoveItem", ->
+      it "does not fire when an item is moved from another pane into this one", ->
+        events = []
+        @tabbable.onDidMoveItem (pane, item) -> events.push([pane, item])
+        @pane2.moveItemToPane(@item2, @pane1, 0)
+        expect(events).toEqualById([])
+
+      it "does not fire when an item is added to the workspace", ->
+        events = []
+        @tabbable.onDidMoveItem (pane, item) -> events.push([pane, item])
+        @pane1.addItem(new TestItem)
+        expect(events).toEqualById([])
+
+      it "does not fire when an item is removed to the workspace", ->
+        events = []
+        @tabbable.onDidMoveItem (pane, item) -> events.push([pane, item])
+        @pane1.removeItem(@item1)
+        expect(events).toEqualById([])
 
     describe "observeActiveItem", ->
       it "fires for the current active item if the pane is active", ->

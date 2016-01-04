@@ -54,6 +54,13 @@ class TabList
       @disposable.add atom.workspace.observeActivePane (pane) =>
         @view.activePaneChanged(pane)
 
+      @disposable.add @tabbable.onDidMoveItem (pane, item) =>
+        tab = find @tabs, (tab) -> tab.item is item
+        tab.pane = pane
+
+  isGlobal: ->
+    @tabbable.workspace?
+
   updateAnimationDelay: (delay) ->
     @view.updateAnimationDelay(delay)
 
@@ -159,16 +166,25 @@ class TabList
       @currentIndex = index
       @view.currentTabChanged(@tabs[index])
 
-  select: ->
+  select: ({pull}={}) ->
     if @switching
       @switching = false
       unless @currentIndex is null
         if 0 <= @currentIndex < @tabs.length
           tab = @tabs[@currentIndex]
-          @tabbable.activateItem(tab.pane, tab.item)
+          activePane = atom.workspace.getActivePane()
+          if pull and @isGlobal() and tab.pane isnt activePane
+            lastIndex = activePane.getItems().length
+            tab.pane.moveItemToPane(tab.item, activePane, lastIndex)
+            activePane.activateItem(tab.item)
+          else
+            @tabbable.activateItem(tab.pane, tab.item)
         @currentIndex = null
         @view.currentTabChanged(null)
       @view.hide()
+
+  pull: ->
+    @select(pull: true)
 
   cancel: ->
     if @switching

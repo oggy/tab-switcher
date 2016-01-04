@@ -8,4 +8,5 @@
   "alt-w": "tab-switcher:close"
   "alt-n": "tab-switcher:next"
   "alt-p": "tab-switcher:previous"
+  "alt-enter": "tab-switcher:pull"
   "alt-s": "tab-switcher:save"
