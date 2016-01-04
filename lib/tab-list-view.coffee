@@ -32,14 +32,14 @@ addEventListener = (element, event, handler) ->
   new Disposable => element.removeEventListener(event, handler)
 
 class TabListView
-  constructor: (tabSwitcher) ->
-    @tabSwitcher = tabSwitcher
+  constructor: (tabList) ->
+    @tabList = tabList
     @disposable = new CompositeDisposable
     @items = {}
     @currentItem = null
     @lastMouseCoords = [null, null]
 
-    for tab in tabSwitcher.tabs
+    for tab in tabList.tabs
       @items[tab.id] = @_makeItem(tab)
 
     @ol = makeElement('ol', 'class': 'tab-switcher-tab-list', 'tabindex': '-1')
@@ -58,13 +58,13 @@ class TabListView
       return if not @mouseMoved(event)
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
-        tabSwitcher.setCurrentId(id)
+        tabList.setCurrentId(id)
 
     @disposable.add addEventListener @ol, 'click', (event) =>
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
-        tabSwitcher.setCurrentId(id)
-        tabSwitcher.select(id)
+        tabList.setCurrentId(id)
+        tabList.select(id)
 
   mouseMoved: (event) ->
     result = @lastMouseCoords[0] != event.screenX or @lastMouseCoords[1] != event.screenY
@@ -93,8 +93,8 @@ class TabListView
     @_buildList()
 
   activePaneChanged: (pane) ->
-    if @tabSwitcher.isGlobal()
-      for tab in @tabSwitcher.tabs
+    if @tabList.isGlobal()
+      for tab in @tabList.tabs
         item = @items[tab.id]
         continue if not item
         action = if tab.pane is pane then 'remove' else 'add'
@@ -122,11 +122,11 @@ class TabListView
 
     invokeSelect = (event) =>
       if not (event.ctrlKey or event.altKey or event.shiftKey or event.metaKey)
-        @tabSwitcher.select()
+        @tabList.select()
         unbind()
 
     invokeCancel = (event) =>
-      @tabSwitcher.cancel()
+      @tabList.cancel()
       unbind()
 
     document.addEventListener 'keyup', invokeSelect
@@ -139,7 +139,7 @@ class TabListView
       @ol.removeEventListener 'blur', invokeCancel
 
   scrollToCurrentTab: ->
-    if (currentTab = @tabSwitcher.tabs[@tabSwitcher.currentIndex])
+    if (currentTab = @tabList.tabs[@tabList.currentIndex])
       view = @items[currentTab.id]
       offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
       @ol.scrollTop = Math.max(offset, 0)
@@ -174,7 +174,7 @@ class TabListView
   _buildList: ->
     while @ol.children.length > 0
       @ol.removeChild(@ol.children[0])
-    for tab in @tabSwitcher.tabs
+    for tab in @tabList.tabs
       @ol.appendChild(@items[tab.id])
 
 module.exports = TabListView
