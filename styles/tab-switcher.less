@@ -1,3 +1,4 @@
+@import "ui-variables";
 atom-panel.modal.tab-switcher {
   top: 0;
   left: 0;
@@ -44,24 +45,24 @@ ol.tab-switcher-tab-list {
   text-align: left;
   list-style: none;
 
-  background-color: rgba(32, 33, 35, 0.7);
+  color: @text-color;
+  background-color: @pane-item-background-color;
+
   border-radius: 1em;
-  font-size: 150%;
-  color: white;
+  font-size: 1.2em;
+  line-height: 1.6em;
 
   li {
     display: flex;
+    padding: 1px 0.5em;
 
     &.current {
-      background: linear-gradient(to bottom, #105db8, #3380db);
-      border-top: solid 1px white;
-      border-bottom: solid 1px white;
-      color: white;
-    }
-
-    &:not(.current) {
-      border-top: solid 1px transparent;
-      border-bottom: solid 1px transparent;
+      background: @text-color;
+      color: @pane-item-background-color;
+      .tab-sublabel {
+        color: @pane-item-background-color;
+        opacity: 1;
+      }
     }
   }
 
@@ -71,8 +72,9 @@ ol.tab-switcher-tab-list {
 
   .tab-sublabel {
     font-size: 75%;
-    color: #d4d4d4;
+    opacity: 0.5;
     margin: 0 1em;
+    color: @text-color;
   }
 
   .tab-label.modified {
