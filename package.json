@@ -12,6 +12,6 @@
   "repository": "https://github.com/oggy/tab-switcher",
   "license": "MIT",
   "engines": {
-    "atom": ">=0.174.0 <2.0.0"
+    "atom": ">=1.7.0 <2.0.0"
   }
 }

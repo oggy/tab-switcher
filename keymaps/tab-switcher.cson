@@ -1,11 +1,16 @@
 "atom-workspace":
   "alt-[": "tab-switcher:previous"
+  "alt-[ ^alt": "tab-switcher:select"
   "alt-]": "tab-switcher:next"
+  "alt-] ^alt": "tab-switcher:select"
 
 "ol.tab-switcher-tab-list":
   "alt-up": "tab-switcher:previous"
   "alt-down": "tab-switcher:next"
-  "alt-w": "tab-switcher:close"
+  "alt-escape": "tab-switcher:cancel"
   "alt-n": "tab-switcher:next"
   "alt-p": "tab-switcher:previous"
+  "alt-w": "tab-switcher:close"
+  "alt-w ^alt": "tab-switcher:select"
   "alt-s": "tab-switcher:save"
+  "alt-s ^alt": "tab-switcher:select"

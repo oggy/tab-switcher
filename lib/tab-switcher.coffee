@@ -53,6 +53,8 @@ module.exports =
     @disposable.add atom.commands.add 'atom-workspace',
       'tab-switcher:next': -> TabSwitcher.currentList()?.next()
       'tab-switcher:previous': -> TabSwitcher.currentList()?.previous()
+      'tab-switcher:select': -> TabSwitcher.currentList()?.select()
+      'tab-switcher:cancel': -> TabSwitcher.currentList()?.cancel()
       'tab-switcher:save': -> TabSwitcher.currentList()?.saveCurrent()
       'tab-switcher:close': -> TabSwitcher.currentList()?.closeCurrent()
 
