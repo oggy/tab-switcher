@@ -15,13 +15,28 @@ OS window switcher.
 * `alt-[` previous tab
 * `alt-]` next tab
 
-To override the defaults just include the following in your `keymap.cson`:
+### Using different keys
+
+You can specify alternate key bindings in `keymap.cson` (menu: Atom -> Keymap).
+A popular desire is to replace the built-in `ctrl-tab` and `ctrl-shift-tab`.
+
 ```
-'body':
-  'ctrl-tab': 'tab-switcher:next'
-  'ctrl-shift-tab': 'tab-switcher:previous'
+"atom-workspace":
+  "ctrl-tab": "tab-switcher:next"
+  "ctrl-tab ^ctrl": "unset!"
+  "ctrl-shift-tab": "tab-switcher:previous"
+  "ctrl-shift-tab ^ctrl": "unset!"
+
+"ol.tab-switcher-tab-list":
+  "^ctrl": "tab-switcher:select"
+  "ctrl-up": "tab-switcher:previous"
+  "ctrl-down": "tab-switcher:next"
+  "ctrl-escape": "tab-switcher:cancel"
+  "ctrl-n": "tab-switcher:next"
+  "ctrl-p": "tab-switcher:previous"
+  "ctrl-w": "tab-switcher:close"
+  "ctrl-s": "tab-switcher:save"
 ```
-Substituting `ctrl-tab` for whatever you prefer, of course.
 
 ## Icons
 
