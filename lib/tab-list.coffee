@@ -37,6 +37,8 @@ class TabList
 
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
+      if atom.config.get 'tab-switcher.reSortTabs'
+        @pane.moveItem(item, 0)
 
     @disposable.add @pane.observeItems (item) =>
       return if !item.onDidChangeTitle
