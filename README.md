@@ -15,6 +15,14 @@ OS window switcher.
 * `alt-[` previous tab
 * `alt-]` next tab
 
+To override the defaults just include the following in your `keymap.cson`:
+```
+'body':
+  'ctrl-tab': 'tab-switcher:next'
+  'ctrl-shift-tab': 'tab-switcher:previous'
+```
+Substituting `ctrl-tab` for whatever you prefer, of course.
+
 ## Icons
 
 Icons are optional, and are provided by the [file-icons][file-icons] package.
