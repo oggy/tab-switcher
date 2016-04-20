@@ -15,6 +15,14 @@ OS window switcher.
 * `alt-[` previous tab
 * `alt-]` next tab
 
+## Using it with Ctrl-Tab
+To replace the standard behavior in Atom, edit your keymap.cson (Atom -> Open Your Keymap) and add:
+```
+'atom-workspace':
+  'ctrl-tab': 'tab-switcher:next'
+  'ctrl-shift-tab': 'tab-switcher:previous'
+```
+
 ## Icons
 
 Icons are optional, and are provided by the [file-icons][file-icons] package.
