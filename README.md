@@ -29,6 +29,7 @@ A popular desire is to replace the built-in `ctrl-tab` and `ctrl-shift-tab`.
 
 "ol.tab-switcher-tab-list":
   "^ctrl": "tab-switcher:select"
+  "^shift": "tab-switcher:select"
   "ctrl-up": "tab-switcher:previous"
   "ctrl-down": "tab-switcher:next"
   "ctrl-escape": "tab-switcher:cancel"
