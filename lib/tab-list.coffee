@@ -164,4 +164,5 @@ class TabList
       unless @currentIndex is null
         @currentIndex = null
         @view.currentTabChanged(null)
+    @pane.activate()
     @view.hide()
