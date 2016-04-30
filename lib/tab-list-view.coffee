@@ -56,6 +56,9 @@ class TabListView
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.setCurrentId(id)
 
+    @disposable.add @ol.addEventListener 'mouseout', (event) =>
+      @lastMouseCoords = [null, null]
+
     @disposable.add @ol.addEventListener 'click', (event) =>
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
