@@ -103,9 +103,9 @@ class TabListView
     @disposable.dispose()
 
   show: ->
-    @scrollToCurrentTab()
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
+    @scrollToCurrentTab()
     @ol.focus()
     setTimeout => @panel.classList.add('is-visible')
 
