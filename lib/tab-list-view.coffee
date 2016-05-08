@@ -127,9 +127,19 @@ class TabListView
 
   scrollToCurrentTab: ->
     if (currentTab = @tabSwitcher.tabs[@tabSwitcher.currentIndex])
-      view = @items[currentTab.id]
-      offset = view.offsetTop - (@ol.clientHeight - view.offsetHeight)/2
-      @ol.scrollTop = Math.max(offset, 0)
+      item = @items[currentTab.id]
+
+      itemTop = item.offsetTop
+      targetMin = itemTop - @ol.clientHeight + 2*item.offsetHeight
+      targetMax = itemTop - item.offsetHeight
+      [targetMin, targetMax] = [targetMax, targetMin] if targetMin > targetMax
+      targetMin = 0 if targetMin < 0
+      targetMax = 0 if targetMax < 0
+
+      if @ol.scrollTop < targetMin
+        @ol.scrollTop = targetMin
+      else if @ol.scrollTop > targetMax
+        @ol.scrollTop = targetMax
 
   hide: ->
     @panel.classList.remove('is-visible')
