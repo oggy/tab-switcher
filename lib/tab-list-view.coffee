@@ -33,7 +33,7 @@ class TabListView
     @disposable = new CompositeDisposable
     @items = {}
     @currentItem = null
-    @lastMouseCoords = [null, null]
+    @lastMouseCoords = null
 
     for tab in tabSwitcher.tabs
       @items[tab.id] = @_makeItem(tab)
@@ -57,7 +57,7 @@ class TabListView
         tabSwitcher.setCurrentId(id)
 
     @disposable.add @ol.addEventListener 'mouseout', (event) =>
-      @lastMouseCoords = [null, null]
+      @lastMouseCoords = null
 
     @disposable.add @ol.addEventListener 'click', (event) =>
       if (li = event.target.closest('li'))
@@ -65,7 +65,7 @@ class TabListView
         tabSwitcher.select(id)
 
   mouseMoved: (event) ->
-    result = @lastMouseCoords[0] != event.screenX or @lastMouseCoords[1] != event.screenY
+    result = @lastMouseCoords? and (@lastMouseCoords[0] != event.screenX or @lastMouseCoords[1] != event.screenY)
     @lastMouseCoords = [event.screenX, event.screenY]
     result
 
