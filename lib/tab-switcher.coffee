@@ -74,3 +74,6 @@ module.exports =
 
   serialize: ->
     TabSwitcher.serialize()
+
+  currentList: ->
+    TabSwitcher.currentList()
