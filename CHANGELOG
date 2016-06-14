@@ -1,5 +1,6 @@
-## LATEST
+## 1.5.0 (2016-06-13)
 
+* Load the package on startup, so tabs are tracked correctly before first use.
 * Fix selected item jumping unexpectedly when cursor is over the tab list.
 
 ## 1.4.0 (2016-04-20)
