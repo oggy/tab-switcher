@@ -3,12 +3,6 @@
   "main": "./lib/tab-switcher",
   "version": "1.4.0",
   "description": "Most recently used (MRU) tab switcher for Atom.",
-  "activationCommands": {
-    "atom-workspace": [
-      "tab-switcher:next",
-      "tab-switcher:previous"
-    ]
-  },
   "repository": "https://github.com/oggy/tab-switcher",
   "license": "MIT",
   "engines": {
