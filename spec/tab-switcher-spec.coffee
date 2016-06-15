@@ -112,18 +112,20 @@ describe 'TabSwitcher', ->
       expect(modalPanel.isVisible()).toBe false
 
   describe 'tab order synchronization', ->
-    it "does reflect the internal list to atom tabs", ->
+    it "does reflect the internal list to atom tabs", (done) ->
       atom.config.set('tab-switcher.reorderTabs', true)
 
       atom.workspace.getActivePane().activateItemAtIndex(n) for n in [0..3]
+      setTimeout (->
+        expect(internalListTitles()).toBe 'E4 E3 E2 E1'
+        expect(atomTabTitles()).toBe 'E4 E3 E2 E1'
+        atom.workspace.getActivePane().activateItemAtIndex(3)
+        expect(internalListTitles()).toBe 'E1 E4 E3 E2'
+        expect(atomTabTitles()).toBe 'E1 E4 E3 E2'
+        done()
+      ), 0
 
-      expect(internalListTitles()).toBe 'E4 E3 E2 E1'
-      expect(atomTabTitles()).toBe 'E4 E3 E2 E1'
-      atom.workspace.getActivePane().activateItemAtIndex(3)
-      expect(internalListTitles()).toBe 'E1 E4 E3 E2'
-      expect(atomTabTitles()).toBe 'E1 E4 E3 E2'
-
-    it "does NOT reflect the internal list to atom tabs", ->
+    it "does NOT reflect the internal list to atom tabs", (done) ->
       atom.config.set('tab-switcher.reorderTabs', false)
       oldAtomTabTitles = atomTabTitles()
       atom.workspace.getActivePane().activateItemAtIndex(0)

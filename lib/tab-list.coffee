@@ -37,8 +37,12 @@ class TabList
 
     @disposable.add @pane.observeActiveItem (item) =>
       @_moveItemToFront(item)
-      if atom.config.get 'tab-switcher.reorderTabs'
-        @pane.moveItem(item, 0)
+      # Atom relies on tab indices not changing during this hook, so we need to
+      # delay this. (#39)
+      moveTab = =>
+        if atom.config.get 'tab-switcher.reorderTabs'
+          @pane.moveItem(item, 0)
+      setTimeout(moveTab, 0)
 
     @disposable.add @pane.observeItems (item) =>
       return if !item.onDidChangeTitle

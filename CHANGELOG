@@ -1,3 +1,7 @@
+## LATEST
+
+* Fix error when removing a tab with "reorder tabs" option set.
+
 ## 1.5.0 (2016-06-13)
 
 * Load the package on startup, so tabs are tracked correctly before first use.
