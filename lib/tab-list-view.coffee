@@ -47,6 +47,8 @@ class TabListView
       item: vert
       visible: false
       className: 'tab-switcher'
+
+    atom.views.getView(@modalPanel).closest('atom-panel-container').classList.add('tab-switcher')
     @panel = vert.parentNode
 
     mouseMove = (event) =>
