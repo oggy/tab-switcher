@@ -48,7 +48,6 @@ class TabListView
       visible: false
       className: 'tab-switcher'
 
-    atom.views.getView(@modalPanel).closest('atom-panel-container').classList.add('tab-switcher')
     @panel = vert.parentNode
 
     mouseMove = (event) =>
@@ -109,6 +108,7 @@ class TabListView
     @disposable.dispose()
 
   show: ->
+    atom.views.getView(@modalPanel).closest('atom-panel-container').classList.add('tab-switcher')
     panel = @ol.closest('atom-panel')
     @modalPanel.show()
     @scrollToCurrentTab()
@@ -148,6 +148,7 @@ class TabListView
         @ol.scrollTop = targetMax
 
   hide: ->
+    atom.views.getView(@modalPanel).closest('atom-panel-container').classList.remove('tab-switcher')
     @panel.classList.remove('is-visible')
     @modalPanel.hide()
 
