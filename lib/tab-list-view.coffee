@@ -1,5 +1,5 @@
 Path = require 'path'
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Disposable} = require 'atom'
 
 makeElement = (name, attributes, children) ->
   element = document.createElement(name)
@@ -57,14 +57,18 @@ class TabListView
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.setCurrentId(id)
 
-    @disposable.add @ol.addEventListener 'mouseenter', (event) =>
+    bindEventListener = (element, event, listener) =>
+      element.addEventListener(event, listener)
+      @disposable.add new Disposable(=> element.removeEventListener(event, listener))
+
+    bindEventListener @ol, 'mouseenter', (event) =>
       @ol.addEventListener 'mousemove', mouseMove
 
-    @disposable.add @ol.addEventListener 'mouseleave', (event) =>
+    bindEventListener @ol, 'mouseleave', (event) =>
       @lastMouseCoords = null
       @ol.removeEventListener 'mousemove', mouseMove
 
-    @disposable.add @ol.addEventListener 'click', (event) =>
+    bindEventListener @ol, 'click', (event) =>
       if (li = event.target.closest('li'))
         id = parseInt(li.getAttribute('data-id'))
         tabSwitcher.select(id)
