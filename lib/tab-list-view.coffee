@@ -167,7 +167,7 @@ class TabListView
         label.classList[action]('modified')
       @disposable.add tab.item.onDidChangeModified(toggleModified)
       toggleModified()
-      path = tab.item.getPath()
+      path = tab.item.getPath() ? ''
       icon = makeElement('span', {class: 'icon icon-file-text', 'data-name': Path.extname(path)})
       dir = if path then projectRelativePath(path) else ''
       sublabelText = document.createTextNode(dir)
