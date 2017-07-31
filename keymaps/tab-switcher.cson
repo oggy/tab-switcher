@@ -1,8 +1,6 @@
 "atom-workspace":
   "alt-[": "tab-switcher:previous"
-  "alt-[ ^alt": "tab-switcher:select"
   "alt-]": "tab-switcher:next"
-  "alt-] ^alt": "tab-switcher:select"
 
 "ol.tab-switcher-tab-list":
   "^alt": "tab-switcher:select"
