@@ -170,3 +170,37 @@ class TabList
         @view.currentTabChanged(null)
     @pane.activate()
     @view.hide()
+
+  @assignPanes: (panes, data) ->
+    paneTitles = new Map
+    for pane in panes
+      paneTitles.set(pane, new Set(item.getTitle() for item in pane.getItems()))
+
+    listTitles = new Map
+    for listData, index in data
+      listTitles.set(listData, new Set(tab.title for tab in listData.tabs))
+
+    jaccard = (set1, set2) ->
+      return 0 if set1.size == 0 or set2.size == 0
+      in_one = 0
+      in_both = 0
+      set1.forEach (element) ->
+        if set2.has(element) then in_both += 1 else in_one += 1
+      set2.forEach (element) ->
+        if !set1.has(element) then in_one += 1
+      in_both / (in_both + in_one)
+
+    scores = data.map (listData, listIndex) ->
+      panes.map (pane) ->
+        [jaccard(paneTitles.get(pane), listTitles.get(listData)), listData, pane]
+    sortedScores = scores.reduce(((a, b) => a.concat(b)), []).sort((a, b) -> b[0] - a[0])
+
+    assignedPanes = new Map
+    assignedLists = new Set
+    for entry in sortedScores
+      [score, listData, pane] = entry
+      unless score < 0.5 or assignedPanes.has(pane.id) or assignedLists.has(listData)
+        assignedPanes.set(pane.id, listData)
+        assignedLists.add(listData)
+
+    assignedPanes

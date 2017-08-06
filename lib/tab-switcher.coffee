@@ -2,41 +2,42 @@
 TabList = require './tab-list'
 
 TabSwitcher =
-  tabLists: {}
+  tabLists: new Map
 
   currentList: ->
     pane = atom.workspace.getActivePane()
     return null if not pane
 
-    tabList = @tabLists[pane.id]
-    if tabList is undefined
-      @tabLists[pane.id] = tabList = new TabList(pane)
+    if !@tabLists.has(pane)
+      @tabLists.set(pane, new TabList(pane))
       pane.onDidDestroy =>
-        delete @tabLists[pane.id]
+        @tabLists.delete(pane)
 
-    return tabList
+    return @tabLists.get(pane)
 
   destroyLists: ->
-    for paneId, tabList of @tabLists
+    @tabLists.forEach (tabList, pane) ->
       tabList.destroy()
 
   serialize: ->
     panesState = atom.workspace.getPanes().map (pane) =>
-      tabList = @tabLists[pane.id]
+      tabList = @tabLists.get(pane)
       if tabList then tabList.serialize() else null
     {version: 1, panes: panesState}
 
   deserialize: (state) ->
     return if state.version != 1
     panes = atom.workspace.getPanes()
+
     if state.panes
-      for paneState, i in state.panes
-        pane = panes[i]
-        continue if paneState is null or pane is undefined
-        @tabLists[pane.id] = new TabList(pane, paneState, state.version)
+      panesState = state.panes.filter((x) => x)
+      assignments = TabList.assignPanes(panes, panesState)
+      assignments.forEach (data, paneId) =>
+        pane = panes.find (pane) -> pane.id == paneId
+        @tabLists.set(pane, new TabList(pane, data, state.version))
 
   updateAnimationDelay: (delay) ->
-    for id, tabList of @tabLists
+    @tabLists.forEach (tabList, id) ->
       tabList.updateAnimationDelay(delay)
 
 module.exports =
