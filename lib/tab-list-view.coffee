@@ -161,6 +161,9 @@ class TabListView
     tab.modifiedIcon = makeElement('span', {class: 'modified-icon'})
     label = makeElement('span', {class: 'tab-label'}, [document.createTextNode(tab.item.getTitle())])
 
+    icon = makeElement('span', {class: 'icon'})
+    TabListView.addIcon(icon, tab.item.getTitle())
+
     if tab.isEditor
       toggleModified = ->
         action = if tab.item.isModified() then 'add' else 'remove'
@@ -168,13 +171,12 @@ class TabListView
       @disposable.add tab.item.onDidChangeModified(toggleModified)
       toggleModified()
       path = tab.item.getPath() ? ''
-      icon = makeElement('span', {class: 'icon icon-file-text', 'data-name': Path.extname(path)})
+
       dir = if path then projectRelativePath(path) else ''
       sublabelText = document.createTextNode(dir)
       sublabel = makeElement('span', {class: 'tab-sublabel'}, [sublabelText])
       labels = makeElement('span', {class: 'tab-labels'}, [tab.modifiedIcon, label, sublabel])
     else
-      icon = makeElement('span', {class: 'icon icon-tools'})
       labels = label
 
     makeElement('li', {'data-id': tab.id}, [icon, labels])

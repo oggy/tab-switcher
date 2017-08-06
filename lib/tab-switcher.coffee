@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
 TabList = require './tab-list'
+TabListView = require './tab-list-view'
 
 TabSwitcher =
   tabLists: new Map
@@ -26,15 +27,29 @@ TabSwitcher =
     {version: 1, panes: panesState}
 
   deserialize: (state) ->
-    return if state.version != 1
-    panes = atom.workspace.getPanes()
+    this.deserializer = ->
+      return if state.version != 1
+      panes = atom.workspace.getPanes()
 
-    if state.panes
-      panesState = state.panes.filter((x) => x)
-      assignments = TabList.assignPanes(panes, panesState)
-      assignments.forEach (data, paneId) =>
-        pane = panes.find (pane) -> pane.id == paneId
-        @tabLists.set(pane, new TabList(pane, data, state.version))
+      if state.panes
+        panesState = state.panes.filter((x) => x)
+        assignments = TabList.assignPanes(panes, panesState)
+        assignments.forEach (data, paneId) =>
+          pane = panes.find (pane) -> pane.id == paneId
+          @tabLists.set(pane, new TabList(pane, data, state.version))
+
+    @deserializeWhenReady('deserialized')
+
+  deserializerEvents: new Set
+
+  # We need to wait until both the deserialization hook is called and the
+  # consumed services are ready.
+  deserializeWhenReady: (event) ->
+    @deserializerEvents.add(event)
+    if @deserializerEvents.size == 2
+      @deserializerEvents.delete('deserialized')
+      @deserializer()
+      delete @deserializer
 
   updateAnimationDelay: (delay) ->
     @tabLists.forEach (tabList, id) ->
@@ -78,3 +93,7 @@ module.exports =
 
   currentList: ->
     TabSwitcher.currentList()
+
+  consumeElementIcons: (f) ->
+    TabListView.addIcon = f
+    TabSwitcher.deserializeWhenReady('servicesConsumed')
