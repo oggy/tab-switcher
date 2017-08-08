@@ -28,6 +28,9 @@ projectRelativePath = (path) ->
     path
 
 class TabListView
+  @addIcon: (element, path) ->
+    # The file-icons service consumer overrides this if available.
+
   constructor: (tabSwitcher) ->
     @tabSwitcher = tabSwitcher
     @disposable = new CompositeDisposable
